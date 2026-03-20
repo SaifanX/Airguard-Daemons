@@ -1,0 +1,7 @@
+{
+  "name": "Copy of AirGuard Mission Control mid hackathon",
+  "description": "Tactical drone airspace defense system with AI co-pilot, mission simulation, and regulatory compliance.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
