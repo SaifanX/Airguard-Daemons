@@ -45,10 +45,23 @@ AirGuard is a drone pre-flight planning tool built in 24 hours for the **TechnoF
 
 ## 🏆 Awards
 - **2nd Prize** at TechnoFest 2026 (Junior Category - Non-BAASC Schools) - February 2026.
-
   
 ![TechnoFest 2nd Prize](https://img.shields.io/badge/TechnoFest_2026-2nd_Prize🥈_(State_Level)-%2394A3B8?style=for-the-badge)
 
+## The Architect
+
+**Saifan Mohammad** *A 14-year-old developer and student based in Bangalore, India.*
+
+AirGuard was engineered and deployed under strict time constraints for **TechnoFest 2026**, a state-level hackathon hosted by Stonehill International School.
+While many hackathon projects remain fragile prototypes, AirGuard was architected from hour zero to be a functional, production-ready utility. The primary directive was to validate the integration of live geospatial mapping and real-time database synchronization under pressure. The system's execution, structural integrity, and real-world applicability secured **2nd Prize** at the event, serving as a baseline proof-of-concept for scalable airspace defense grids.
+
+This system was constructed to solve high-stakes, real-world utility problems—specifically, the visualization and management of civilian drone airspace and dynamic flight corridors. Securing 2nd Prize at the TechnoFest 2026 State Level Hackathon served as a baseline validation of this architecture, but the ultimate objective remains the same: scaling high-friction, mission-critical systems. 
+
+
+* **Capabilities:** Geospatial Engineering, Full-Stack Architecture, AI Co-Pilot Integration.
+* **Operating Thesis:** Drive high-agency output through strict personal systems and cross-domain execution.
+
+[GitHub](https://github.com/saifanx) | [Access AirGuard](https://airguard-1.netlify.app/)
 
 ## 📝 Disclaimer
 This project was made for a student competition. Always follow your local aviation authority's actual laws and use official apps for real drone flying!
