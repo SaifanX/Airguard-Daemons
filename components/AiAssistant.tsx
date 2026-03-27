@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
-import { lineString, length, polygon, booleanIntersects } from '@turf/turf';
+import { lineString, polygon, booleanIntersects } from '@turf/turf';
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { RESTRICTED_ZONES } from "../data/zones";
@@ -24,7 +24,7 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const askCaptain = useAction(api.ai.askCaptain);
@@ -74,12 +74,26 @@ const AiAssistant: React.FC = () => {
     }
 
     try {
+      const flightDetails = {
+        altitude: droneSettings.altitude,
+        model: droneSettings.model
+      };
+
+      const weatherDetails = weather ? {
+        condition: weather.condition,
+        windSpeed: weather.windSpeed,
+        temp: weather.temp,
+        windDirection: weather.windDirection,
+        visibility: weather.visibility,
+        isFlyable: weather.isFlyable
+      } : undefined;
+
       const aiResponseText = await askCaptain({
         userMessage: textToSend,
         riskLevel,
         violations,
-        flightDetails: droneSettings,
-        weather,
+        flightDetails,
+        weather: weatherDetails,
         zoneContext
       });
 
