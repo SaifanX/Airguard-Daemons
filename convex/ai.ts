@@ -2,6 +2,9 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
+import { RESTRICTED_ZONES } from "../data/zones.ts";
+import { ZoneType } from "../types.ts";
+import { lineString, polygon, booleanIntersects } from "@turf/turf";
 
 // This action is used if you want to run the AI call on the backend
 // instead of the frontend.
@@ -22,7 +25,7 @@ export const askCaptain = action({
       visibility: v.number(),
       isFlyable: v.boolean(),
     })),
-    zoneContext: v.string()
+    flightPath: v.array(v.object({ lat: v.number(), lng: v.number() })),
   },
   handler: async (ctx, args) => {
     // API_KEY is set via the Convex dashboard / env variables
@@ -30,6 +33,23 @@ export const askCaptain = action({
     if (!apiKey) {
       console.error("AI_COMMAND_ERROR: API_KEY is missing from environment.");
       return "Tactical link failed. System API_KEY is not configured in the environment.";
+    }
+
+    let zoneContext = "Primary airspace is clear of active restrictions.";
+    if (args.flightPath && args.flightPath.length >= 2) {
+      try {
+        const line = lineString(args.flightPath.map(p => [p.lng, p.lat]));
+        const intersected = RESTRICTED_ZONES.filter(zone => {
+          if (zone.type === ZoneType.CONTROLLED) return false;
+          const polyCoords = [...zone.coordinates.map(c => [c.lng, c.lat]), [zone.coordinates[0].lng, zone.coordinates[0].lat]];
+          const poly = polygon([polyCoords as any]);
+          return booleanIntersects(line, poly);
+        }).map(z => z.name);
+
+        if (intersected.length > 0) zoneContext = `CRITICAL: Flight vector enters restricted zones: ${intersected.join(", ")}.`;
+      } catch (e) {
+        console.warn("Zone intersection check failed during AI context generation");
+      }
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -48,7 +68,7 @@ export const askCaptain = action({
     - Safety Violations Found: ${args.violations.length > 0 ? args.violations.join(", ") : "None Detected"}
     - Drone Config: ${args.flightDetails.model} (Operating Height: ${args.flightDetails.altitude}m)
     - ${weatherContext}
-    - Airspace Status: ${args.zoneContext}
+    - Airspace Status: ${zoneContext}
 
     PERSONALITY:
     - Professional, encouraging, and clear.

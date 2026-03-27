@@ -17,8 +17,8 @@ import {
   bbox, 
   distance 
 } from '@turf/turf';
-import { Coordinate, DroneSettings, ZoneType } from '../types';
-import { RESTRICTED_ZONES } from '../data/zones';
+import { Coordinate, DroneSettings, ZoneType } from '../types.ts';
+import { RESTRICTED_ZONES } from '../data/zones.ts';
 
 export const calculatePathRisk = (
   path: Coordinate[],

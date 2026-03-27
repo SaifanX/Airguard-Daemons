@@ -1,11 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
-import { lineString, polygon, booleanIntersects } from '@turf/turf';
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { RESTRICTED_ZONES } from "../data/zones";
-import { ZoneType } from "../types";
 
 interface Message {
   id: string;
@@ -56,23 +53,6 @@ const AiAssistant: React.FC = () => {
     if (!overrideText) setInput('');
     setIsLoading(true);
 
-    let zoneContext = "Primary airspace is clear of active restrictions.";
-    if (flightPath && flightPath.length >= 2) {
-      try {
-        const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-        const intersected = RESTRICTED_ZONES.filter(zone => {
-          if (zone.type === ZoneType.CONTROLLED) return false;
-          const polyCoords = [...zone.coordinates.map(c => [c.lng, c.lat]), [zone.coordinates[0].lng, zone.coordinates[0].lat]];
-          const poly = polygon([polyCoords as any]);
-          return booleanIntersects(line, poly);
-        }).map(z => z.name);
-
-        if (intersected.length > 0) zoneContext = `CRITICAL: Flight vector enters restricted zones: ${intersected.join(", ")}.`;
-      } catch (e) {
-        console.warn("Zone intersection check failed during AI context generation");
-      }
-    }
-
     try {
       const flightDetails = {
         altitude: droneSettings.altitude,
@@ -94,7 +74,7 @@ const AiAssistant: React.FC = () => {
         violations,
         flightDetails,
         weather: weatherDetails,
-        zoneContext
+        flightPath: flightPath.map(p => ({ lat: p.lat, lng: p.lng }))
       });
 
       const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
