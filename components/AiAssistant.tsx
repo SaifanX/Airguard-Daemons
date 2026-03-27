@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
+import { useAction } from 'convex/react';
+import { api } from '../convex/_generated/api';
 import { lineString, length } from '@turf/turf';
 
 interface Message {
@@ -23,6 +24,7 @@ const AiAssistant: React.FC = () => {
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const askCaptainAction = useAction(api.ai.askCaptain);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -63,16 +65,21 @@ const AiAssistant: React.FC = () => {
         }
     } catch (e) {}
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
+    const aiResponseText = await askCaptainAction({
+      userMessage: textToSend,
       riskLevel,
       violations,
-      droneSettings,
-      weather,
+      flightDetails: droneSettings,
+      weather: weather ? { condition: weather.condition, windSpeed: weather.windSpeed } : undefined,
       flightStats,
-      telemetry,
-      flightPath
-    );
+      telemetry: telemetry ? {
+        speed: telemetry.speed,
+        heading: telemetry.heading,
+        battery: telemetry.battery,
+        altitudeAGL: telemetry.altitudeAGL
+      } : undefined,
+      path: flightPath
+    });
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
     setMessages(prev => [...prev, aiMsg]);
