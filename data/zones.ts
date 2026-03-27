@@ -1,5 +1,5 @@
 
-import { Zone, ZoneType } from '../types';
+import { Zone, ZoneType } from '../types.ts';
 
 export const RESTRICTED_ZONES: Zone[] = [
   {

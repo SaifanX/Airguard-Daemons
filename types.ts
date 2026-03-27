@@ -3,11 +3,13 @@ export interface Coordinate {
   lng: number;
 }
 
-export enum ZoneType {
-  CRITICAL = 'CRITICAL', // Red
-  RESTRICTED = 'RESTRICTED', // Yellow
-  CONTROLLED = 'CONTROLLED', // Blue
-}
+export const ZoneType = {
+  CRITICAL: 'CRITICAL', // Red
+  RESTRICTED: 'RESTRICTED', // Yellow
+  CONTROLLED: 'CONTROLLED', // Blue
+} as const;
+
+export type ZoneType = typeof ZoneType[keyof typeof ZoneType];
 
 export interface Zone {
   id: string;
