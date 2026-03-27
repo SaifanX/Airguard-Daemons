@@ -128,16 +128,19 @@ export const askCaptain = action({
     `;
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash", // Using a stable model name
-        contents: args.userMessage,
-        config: {
-          systemInstruction,
+      const model = ai.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        systemInstruction,
+      });
+
+      const response = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: args.userMessage }] }],
+        generationConfig: {
           temperature: 0.7,
         }
       });
 
-      return response.text || "Communication relay weak. Please rephrase your request, Pilot.";
+      return response.response.text() || "Communication relay weak. Please rephrase your request, Pilot.";
     } catch (error: any) {
       console.error("Gemini API Error:", error);
       if (error.message?.includes("API key not valid")) {
