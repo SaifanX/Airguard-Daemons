@@ -1,0 +1,25 @@
+
+> copy-of-airguard-mission-control-mid-hackathon@0.0.0 build
+> vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 2000 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            12.13 kB │ gzip:  3.89 kB
+dist/assets/triangle-alert-6tOIzGW4.js      0.44 kB │ gzip:  0.32 kB
+dist/assets/plane-DgVdzkA-.js               0.48 kB │ gzip:  0.36 kB
+dist/assets/users-CNIStMPo.js               0.48 kB │ gzip:  0.33 kB
+dist/assets/shield-check-Czq4OS6O.js        0.50 kB │ gzip:  0.36 kB
+dist/assets/github-CPYGkHqO.js              0.58 kB │ gzip:  0.40 kB
+dist/assets/trophy-B0OZ0uJn.js              0.93 kB │ gzip:  0.45 kB
+dist/assets/message-square-DmxiqGDI.js      1.19 kB │ gzip:  0.48 kB
+dist/assets/createLucideIcon-DNvBNWjL.js    1.58 kB │ gzip:  0.66 kB
+dist/assets/NotFound-CLHg4vdN.js            1.61 kB │ gzip:  0.88 kB
+dist/assets/Team-D63fbWVY.js                7.99 kB │ gzip:  2.73 kB
+dist/assets/HackathonInfo-CSa5SYSo.js      13.64 kB │ gzip:  3.55 kB
+dist/assets/UnifiedLanding-BE56IJ8N.js     16.77 kB │ gzip:  5.04 kB
+dist/assets/MissionControl-BNWbxGer.js    259.29 kB │ gzip: 73.65 kB
+dist/assets/index-BjwUF3ZD.js             292.18 kB │ gzip: 90.38 kB
+✓ built in 7.23s

@@ -1,0 +1,4 @@
+## 2024-06-18 - API Key Leak via Vite Config
+**Vulnerability:** The Google Gemini API key was being hardcoded and injected directly into the client bundle via `vite.config.ts` using the `define` property. This allowed any user to extract the sensitive API key.
+**Learning:** Never inject sensitive API keys into the frontend client. Frontend applications (like those built with Vite) are fully exposed to the end user.
+**Prevention:** Proxy all AI and other sensitive API calls through a backend service (like Convex server functions). The backend service should read the API keys securely from its environment variables without exposing them to the client.
