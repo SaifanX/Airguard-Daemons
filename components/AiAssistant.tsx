@@ -2,8 +2,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
-import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
+import { lineString, length, polygon, booleanIntersects } from '@turf/turf';
+import { RESTRICTED_ZONES } from '../data/zones';
 
 interface Message {
   id: string;
@@ -24,6 +26,8 @@ const AiAssistant: React.FC = () => {
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const askCaptain = useAction(api.ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,6 +57,8 @@ const AiAssistant: React.FC = () => {
     setIsLoading(true);
 
     let flightStats;
+    let zoneContext = "Primary airspace is clear of active restrictions.";
+
     try {
         if (flightPath.length >= 2) {
             const line = lineString(flightPath.map(p => [p.lng, p.lat]));
@@ -60,19 +66,33 @@ const AiAssistant: React.FC = () => {
                 distance: parseFloat(length(line, { units: 'kilometers' }).toFixed(2)), 
                 waypoints: flightPath.length 
             };
-        }
-    } catch (e) {}
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
-      riskLevel,
-      violations,
-      droneSettings,
-      weather,
-      flightStats,
-      telemetry,
-      flightPath
-    );
+            const intersected = RESTRICTED_ZONES.filter(zone => {
+                if (zone.type === 'CONTROLLED') return false;
+                const polyCoords = [...zone.coordinates.map(c => [c.lng, c.lat]), [zone.coordinates[0].lng, zone.coordinates[0].lat]];
+                const poly = polygon([polyCoords as any]);
+                return booleanIntersects(line, poly);
+            }).map(z => z.name);
+
+            if (intersected.length > 0) zoneContext = `CRITICAL: Flight vector enters restricted zones: ${intersected.join(", ")}.`;
+        }
+    } catch (e) {
+        console.warn("Zone intersection check failed during AI context generation");
+    }
+
+    let aiResponseText = "";
+    try {
+      aiResponseText = await askCaptain({
+        userMessage: textToSend,
+        riskLevel: riskLevel,
+        violations: violations,
+        flightDetails: droneSettings,
+        weather: weather,
+        zoneContext: zoneContext,
+      });
+    } catch (e) {
+      aiResponseText = "Relay Error: Could not connect to the AI Tactical Core. Check logs.";
+    }
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
     setMessages(prev => [...prev, aiMsg]);
