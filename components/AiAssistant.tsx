@@ -70,10 +70,27 @@ const AiAssistant: React.FC = () => {
       riskLevel,
       violations,
       droneModel: droneSettings.model,
-      weather,
-      flightStats,
-      telemetry,
-      path: flightPath,
+      weather: weather ? {
+        temp: weather.temp,
+        windSpeed: weather.windSpeed,
+        windDirection: weather.windDirection,
+        visibility: weather.visibility,
+        condition: weather.condition,
+        isFlyable: weather.isFlyable,
+      } : undefined,
+      flightStats: flightStats ? {
+        distance: flightStats.distance,
+        waypoints: flightStats.waypoints,
+      } : undefined,
+      telemetry: telemetry ? {
+        speed: telemetry.speed,
+        heading: telemetry.heading,
+        battery: telemetry.battery,
+        altitudeAGL: telemetry.altitudeAGL,
+        signalStrength: telemetry.signalStrength,
+        satCount: telemetry.satCount,
+      } : undefined,
+      path: flightPath ? flightPath.map(p => ({ lat: p.lat, lng: p.lng })) : undefined,
     });
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
