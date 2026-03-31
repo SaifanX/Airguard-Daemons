@@ -2,8 +2,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -24,6 +25,7 @@ const AiAssistant: React.FC = () => {
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const askCaptain = useAction(api.ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,19 +65,25 @@ const AiAssistant: React.FC = () => {
         }
     } catch (e) {}
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
-      riskLevel,
-      violations,
-      droneSettings,
-      weather,
-      flightStats,
-      telemetry,
-      flightPath
-    );
+    try {
+      const aiResponseText = await askCaptain({
+        userMessage: textToSend,
+        riskLevel,
+        violations,
+        flightDetails: droneSettings,
+        weather,
+        flightStats,
+        telemetry,
+        path: flightPath,
+      });
 
-    const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
-    setMessages(prev => [...prev, aiMsg]);
+      const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
+      setMessages(prev => [...prev, aiMsg]);
+    } catch (error) {
+      console.error("AI Assistant Error:", error);
+      const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: "Error connecting to AI service." };
+      setMessages(prev => [...prev, aiMsg]);
+    }
     setIsLoading(false);
   };
 
