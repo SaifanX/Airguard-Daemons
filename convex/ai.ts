@@ -79,10 +79,24 @@ export const askCaptain = action({
     userMessage: v.string(),
     riskLevel: v.number(),
     violations: v.array(v.string()),
-    flightDetails: v.any(),
-    weather: v.optional(v.any()),
-    flightStats: v.optional(v.any()),
-    telemetry: v.optional(v.any()),
+    flightDetails: v.object({
+      altitude: v.number(),
+      model: v.string(),
+    }),
+    weather: v.optional(v.object({
+      condition: v.string(),
+      windSpeed: v.number(),
+    })),
+    flightStats: v.optional(v.object({
+      distance: v.number(),
+      waypoints: v.number(),
+    })),
+    telemetry: v.optional(v.object({
+      speed: v.number(),
+      heading: v.number(),
+      battery: v.number(),
+      altitudeAGL: v.number(),
+    })),
     path: v.optional(v.array(v.object({ lat: v.number(), lng: v.number() })))
   },
   handler: async (ctx, args) => {

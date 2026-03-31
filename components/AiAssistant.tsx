@@ -69,12 +69,26 @@ const AiAssistant: React.FC = () => {
       const aiResponseText = await askCaptain({
         userMessage: textToSend,
         riskLevel,
-        violations,
-        flightDetails: droneSettings,
-        weather,
-        flightStats,
-        telemetry,
-        path: flightPath,
+        violations: [...violations],
+        flightDetails: {
+          altitude: droneSettings.altitude,
+          model: droneSettings.model,
+        },
+        weather: weather ? {
+          condition: weather.condition,
+          windSpeed: weather.windSpeed,
+        } : undefined,
+        flightStats: flightStats ? {
+          distance: flightStats.distance,
+          waypoints: flightStats.waypoints,
+        } : undefined,
+        telemetry: telemetry ? {
+          speed: telemetry.speed,
+          heading: telemetry.heading,
+          battery: telemetry.battery,
+          altitudeAGL: telemetry.altitudeAGL,
+        } : undefined,
+        path: flightPath.map(p => ({ lat: p.lat, lng: p.lng })),
       });
 
       const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
