@@ -2,8 +2,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -12,6 +13,7 @@ interface Message {
 }
 
 const AiAssistant: React.FC = () => {
+  const askCaptain = useAction(api.ai.askCaptain);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([{
@@ -63,16 +65,33 @@ const AiAssistant: React.FC = () => {
         }
     } catch (e) {}
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
+    const aiResponseText = await askCaptain({
+      userMessage: textToSend,
       riskLevel,
       violations,
-      droneSettings,
-      weather,
-      flightStats,
-      telemetry,
-      flightPath
-    );
+      droneModel: droneSettings.model,
+      weather: weather ? {
+        temp: weather.temp,
+        windSpeed: weather.windSpeed,
+        windDirection: weather.windDirection,
+        visibility: weather.visibility,
+        condition: weather.condition,
+        isFlyable: weather.isFlyable,
+      } : undefined,
+      flightStats: flightStats ? {
+        distance: flightStats.distance,
+        waypoints: flightStats.waypoints,
+      } : undefined,
+      telemetry: telemetry ? {
+        speed: telemetry.speed,
+        heading: telemetry.heading,
+        battery: telemetry.battery,
+        altitudeAGL: telemetry.altitudeAGL,
+        signalStrength: telemetry.signalStrength,
+        satCount: telemetry.satCount,
+      } : undefined,
+      path: flightPath ? flightPath.map(p => ({ lat: p.lat, lng: p.lng })) : undefined,
+    });
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
     setMessages(prev => [...prev, aiMsg]);
