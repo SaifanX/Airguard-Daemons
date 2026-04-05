@@ -1,0 +1,4 @@
+## 2025-04-01 - [Vite Envrionment Variable Leak]
+**Vulnerability:** A critical vulnerability where `process.env.API_KEY` mapping to `GEMINI_API_KEY` was injected into the client bundle via Vite's `define` config.
+**Learning:** Never put sensitive secrets in the `vite.config.ts` `define` block unless they're intended to be public. This configuration injects the values directly into the output JavaScript bundle.
+**Prevention:** All AI interactions and anything using an API key must be proxied through secure backend actions (e.g., Convex server actions). The server code is executed securely and environment variables can be safely accessed. Furthermore, when using Node-specific SDKs in Convex actions, include the `"use node";` directive to run it on the Node.js runtime instead of the V8 isolate edge runtime.
