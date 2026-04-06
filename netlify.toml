@@ -1,5 +1,5 @@
 [build]
-  command = "npx convex deploy --cmd 'npm run build'"
+  command = "pnpm dlx convex deploy --cmd 'pnpm run build'"
   publish = "dist"
 
 [build.environment]
