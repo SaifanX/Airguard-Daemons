@@ -100,7 +100,7 @@ const AiAssistant: React.FC = () => {
               </div>
             </div>
             
-            <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-white transition-colors" aria-label="Close Assistant">
               <X size={18} />
             </button>
           </div>
@@ -156,6 +156,7 @@ const AiAssistant: React.FC = () => {
               onClick={() => handleSend()}
               disabled={isLoading || !input.trim()}
               className="p-2 bg-aviation-orange text-white rounded-lg hover:bg-orange-600 disabled:opacity-30 transition-all shadow-lg"
+              aria-label="Send message"
             >
               <Send size={18} />
             </button>
