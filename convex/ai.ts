@@ -1,29 +1,46 @@
+"use node";
+
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
 
-// This action is used if you want to run the AI call on the backend
-// instead of the frontend.
 export const askCaptain = action({
   args: {
     userMessage: v.string(),
     riskLevel: v.number(),
     violations: v.array(v.string()),
     droneModel: v.string(),
+    droneAltitude: v.optional(v.number()),
+    weatherContext: v.optional(v.string()),
+    zoneContext: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("API Key missing on server");
 
     const ai = new GoogleGenAI({ apiKey });
     const model = "gemini-3-flash-preview";
 
+    const altitudeText = args.droneAltitude !== undefined ? ` (Operating Height: ${args.droneAltitude}m)` : "";
+    const weatherText = args.weatherContext || "- Weather telemetry not synced";
+    const zoneText = args.zoneContext || "Primary airspace is clear of active restrictions.";
+
     const systemPrompt = `
-      You are Captain Arjun, a retired Indian Air Force pilot and strict drone safety instructor.
-      Risk Level: ${args.riskLevel}%.
-      Violations: ${args.violations.join(", ")}.
-      Drone: ${args.droneModel}.
-      Be strict, professional, and concise.
+      You are 'Guard-1', a helpful AI flight safety assistant for AirGuard (a project by Team Daemons, winner of 2nd place at TechnoFest 2026, Stonehill School).
+      Your goal is to help drone pilots fly safely by providing concise, actionable advice based on the provided mission context.
+
+      MISSION CONTEXT:
+      - Current Risk Assessment: ${args.riskLevel}%
+      - Safety Violations Found: ${args.violations.length > 0 ? args.violations.join(", ") : "None Detected"}
+      - Drone Config: ${args.droneModel}${altitudeText}
+      - ${weatherText}
+      - Airspace Status: ${zoneText}
+
+      PERSONALITY:
+      - Professional, encouraging, and clear.
+      - Use aviation terminology where appropriate but keep it accessible.
+      - If risk is high (>60%), be more urgent and professional.
+      - Always reference safety first.
     `;
 
     try {
@@ -32,9 +49,12 @@ export const askCaptain = action({
         contents: args.userMessage,
         config: { systemInstruction: systemPrompt }
       });
-      return response.text;
-    } catch (e) {
+      return response.text || "Communication relay weak. Please rephrase your request, Pilot.";
+    } catch (e: any) {
       console.error(e);
+      if (e.message?.includes("API key not valid")) {
+        return "SECURITY ERROR: The tactical API key is invalid. Please contact system admin.";
+      }
       return "Radio silence. Connection error.";
     }
   },

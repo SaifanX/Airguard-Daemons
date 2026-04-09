@@ -1,6 +1,6 @@
 [build]
-  command = "npx convex deploy --cmd 'npm run build'"
+  command = "npx convex deploy --cmd 'pnpm run build'"
   publish = "dist"
 
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "VITE_CONVEX_URL"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_CONVEX_URL,GEMINI_API_KEY"
