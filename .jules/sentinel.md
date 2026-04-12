@@ -1,0 +1,4 @@
+## 2025-03-03 - Critical: API Key Exposure via Vite Define
+**Vulnerability:** The Google GenAI API key was directly injected into the client-side JavaScript bundle using Vite's `define` property. This allowed any user viewing the page source to extract the key. The app was using a client-side AI service wrapper (`services/geminiService.ts`).
+**Learning:** In Vite + React codebases, developers often attempt to bypass lack of backend access by injecting secrets via `define` or `import.meta.env` to make client-side API requests. This is fundamentally insecure for restricted APIs.
+**Prevention:** Always verify that API keys for services without their own client-side authorization domains are only accessed in server-side logic (e.g. Convex node actions). Remove exposed variables from `vite.config.ts`.
