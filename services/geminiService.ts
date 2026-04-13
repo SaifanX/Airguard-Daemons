@@ -3,15 +3,10 @@ import { RESTRICTED_ZONES } from "../data/zones";
 import { ZoneType } from "../types";
 import { lineString, polygon, booleanIntersects } from '@turf/turf';
 
-export const buildSystemPrompt = (
-  riskLevel: number,
-  violations: string[],
-  flightDetails: any,
+export const getContexts = (
   weather?: any,
-  flightStats?: { distance: number; waypoints: number },
-  telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
   path?: { lat: number, lng: number }[]
-): string => {
+): { weatherContext: string, zoneContext: string } => {
   const weatherContext = weather 
     ? `- Weather: ${weather.condition}, Wind: ${weather.windSpeed} km/h`
     : "- Weather telemetry not synced";
@@ -33,21 +28,5 @@ export const buildSystemPrompt = (
     }
   }
 
-  return `
-    You are 'Guard-1', a helpful AI flight safety assistant for AirGuard (a project by Team Daemons, winner of 2nd place at TechnoFest 2026, Stonehill School).
-    Your goal is to help drone pilots fly safely by providing concise, actionable advice based on the provided mission context.
-    
-    MISSION CONTEXT:
-    - Current Risk Assessment: ${riskLevel}%
-    - Safety Violations Found: ${violations.length > 0 ? violations.join(", ") : "None Detected"}
-    - Drone Config: ${flightDetails.model} (Operating Height: ${flightDetails.altitude}m)
-    - ${weatherContext}
-    - Airspace Status: ${zoneContext}
-
-    PERSONALITY:
-    - Professional, encouraging, and clear.
-    - Use aviation terminology where appropriate but keep it accessible.
-    - If risk is high (>60%), be more urgent and professional.
-    - Always reference safety first.
-  `;
+  return { weatherContext, zoneContext };
 };

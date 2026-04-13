@@ -2,8 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { buildSystemPrompt } from '../services/geminiService';
-import { lineString, length } from '@turf/turf';
+import { getContexts } from '../services/geminiService';
 import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
 
@@ -24,7 +23,7 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const askCaptainAction = useAction(api.ai.askCaptain);
@@ -56,24 +55,8 @@ const AiAssistant: React.FC = () => {
     if (!overrideText) setInput('');
     setIsLoading(true);
 
-    let flightStats;
-    try {
-        if (flightPath.length >= 2) {
-            const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-            flightStats = { 
-                distance: parseFloat(length(line, { units: 'kilometers' }).toFixed(2)), 
-                waypoints: flightPath.length 
-            };
-        }
-    } catch (e) {}
-
-    const systemPrompt = buildSystemPrompt(
-      riskLevel,
-      violations,
-      droneSettings,
+    const { weatherContext, zoneContext } = getContexts(
       weather,
-      flightStats,
-      telemetry,
       flightPath
     );
 
@@ -81,7 +64,12 @@ const AiAssistant: React.FC = () => {
     try {
       aiResponseText = await askCaptainAction({
         userMessage: textToSend,
-        systemPrompt: systemPrompt
+        riskLevel,
+        violations,
+        droneModel: droneSettings.model,
+        droneAltitude: droneSettings.altitude,
+        weatherContext,
+        zoneContext,
       });
     } catch (error) {
       console.error("Convex askCaptain Action Error:", error);
