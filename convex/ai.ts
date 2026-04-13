@@ -1,3 +1,5 @@
+"use node";
+
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
@@ -7,35 +9,28 @@ import { GoogleGenAI } from "@google/genai";
 export const askCaptain = action({
   args: {
     userMessage: v.string(),
-    riskLevel: v.number(),
-    violations: v.array(v.string()),
-    droneModel: v.string(),
+    systemPrompt: v.string(),
   },
   handler: async (ctx, args) => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("API Key missing on server");
 
     const ai = new GoogleGenAI({ apiKey });
     const model = "gemini-3-flash-preview";
 
-    const systemPrompt = `
-      You are Captain Arjun, a retired Indian Air Force pilot and strict drone safety instructor.
-      Risk Level: ${args.riskLevel}%.
-      Violations: ${args.violations.join(", ")}.
-      Drone: ${args.droneModel}.
-      Be strict, professional, and concise.
-    `;
-
     try {
       const response = await ai.models.generateContent({
         model,
         contents: args.userMessage,
-        config: { systemInstruction: systemPrompt }
+        config: { systemInstruction: args.systemPrompt, temperature: 0.7 }
       });
       return response.text;
-    } catch (e) {
-      console.error(e);
-      return "Radio silence. Connection error.";
+    } catch (e: any) {
+      console.error("Gemini API Error:", e);
+      if (e.message?.includes("API key not valid")) {
+        return "SECURITY ERROR: The tactical API key is invalid. Please contact system admin.";
+      }
+      return "Relay Error: Could not connect to the AI Tactical Core. Check logs.";
     }
   },
 });

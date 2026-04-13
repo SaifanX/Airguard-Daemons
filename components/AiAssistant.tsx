@@ -2,8 +2,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
+import { buildSystemPrompt } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
+import { useAction } from 'convex/react';
+import { api } from '../convex/_generated/api';
 
 interface Message {
   id: string;
@@ -24,6 +26,8 @@ const AiAssistant: React.FC = () => {
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const askCaptainAction = useAction(api.ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,8 +67,7 @@ const AiAssistant: React.FC = () => {
         }
     } catch (e) {}
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
+    const systemPrompt = buildSystemPrompt(
       riskLevel,
       violations,
       droneSettings,
@@ -73,6 +76,17 @@ const AiAssistant: React.FC = () => {
       telemetry,
       flightPath
     );
+
+    let aiResponseText = "Communication relay weak. Please rephrase your request, Pilot.";
+    try {
+      aiResponseText = await askCaptainAction({
+        userMessage: textToSend,
+        systemPrompt: systemPrompt
+      });
+    } catch (error) {
+      console.error("Convex askCaptain Action Error:", error);
+      aiResponseText = "Relay Error: Could not connect to the AI Tactical Core. Check logs.";
+    }
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
     setMessages(prev => [...prev, aiMsg]);

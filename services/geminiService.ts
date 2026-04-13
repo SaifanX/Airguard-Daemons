@@ -1,11 +1,9 @@
 
-import { GoogleGenAI } from "@google/genai";
 import { RESTRICTED_ZONES } from "../data/zones";
 import { ZoneType } from "../types";
 import { lineString, polygon, booleanIntersects } from '@turf/turf';
 
-export const getCaptainCritique = async (
-  userMessage: string,
+export const buildSystemPrompt = (
   riskLevel: number,
   violations: string[],
   flightDetails: any,
@@ -13,16 +11,7 @@ export const getCaptainCritique = async (
   flightStats?: { distance: number; waypoints: number },
   telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
   path?: { lat: number, lng: number }[]
-): Promise<string> => {
-  // Use the pre-configured environment variable exclusively.
-  // Ensure we are using the new constructor syntax properly.
-  if (!process.env.API_KEY) {
-    console.error("AI_COMMAND_ERROR: API_KEY is missing from environment.");
-    return "Tactical link failed. System API_KEY is not configured in the environment.";
-  }
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
+): string => {
   const weatherContext = weather 
     ? `- Weather: ${weather.condition}, Wind: ${weather.windSpeed} km/h`
     : "- Weather telemetry not synced";
@@ -44,7 +33,7 @@ export const getCaptainCritique = async (
     }
   }
 
-  const systemInstruction = `
+  return `
     You are 'Guard-1', a helpful AI flight safety assistant for AirGuard (a project by Team Daemons, winner of 2nd place at TechnoFest 2026, Stonehill School).
     Your goal is to help drone pilots fly safely by providing concise, actionable advice based on the provided mission context.
     
@@ -61,24 +50,4 @@ export const getCaptainCritique = async (
     - If risk is high (>60%), be more urgent and professional.
     - Always reference safety first.
   `;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: userMessage,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      }
-    });
-
-    // Accessing .text as a property as per latest SDK guidelines
-    return response.text || "Communication relay weak. Please rephrase your request, Pilot.";
-  } catch (error: any) {
-    console.error("Gemini API Error:", error);
-    if (error.message?.includes("API key not valid")) {
-      return "SECURITY ERROR: The tactical API key is invalid. Please contact system admin.";
-    }
-    return "Relay Error: Could not connect to the AI Tactical Core. Check logs.";
-  }
 };
