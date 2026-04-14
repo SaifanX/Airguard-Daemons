@@ -1,0 +1,4 @@
+## 2024-05-18 - Client-Side API Key Exposure & Context Logic Leak
+**Vulnerability:** A critical vulnerability where `API_KEY` was exposed to the client bundle via Vite's `define` configuration in `vite.config.ts`, and AI chat requests were made directly from the client using `services/geminiService.ts`.
+**Learning:** Directly injecting API keys into Vite's `define` block is dangerous, as it makes secrets accessible in the compiled client code. Furthermore, moving security and AI generation logic entirely to the client increases risk and exposes proprietary system prompts.
+**Prevention:** Never use Vite `define` to inject secrets. All AI interactions should be proxied through secure backend actions (like Convex `action`s). Generate prompt context locally on the frontend where possible, but always let the server hold the API key and handle the final model invocation securely.
