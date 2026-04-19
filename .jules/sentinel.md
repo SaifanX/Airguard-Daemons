@@ -1,0 +1,7 @@
+## 2024-05-24 - AI Secret Leak and Prompt Security Vulnerabilities
+**Vulnerability:** Client-Side API Key Exposure and Prompt Injection
+**Learning:** Hardcoding API keys via Vite's `define` configuration injects secrets directly into the client-side JavaScript bundle, making them easily extractable by malicious actors. Additionally, constructing sensitive system prompts directly on the frontend allows adversaries to view or manipulate them through the developer console, potentially leading to "Open Proxy" or "Confused Deputy" attacks.
+**Prevention:**
+1.  **Never inject sensitive secrets into the frontend build:** Avoid using `define` in `vite.config.ts` or `import.meta.env` for API keys. Instead, use a backend service (like Convex server actions) to securely proxy requests to third-party APIs.
+2.  **Construct system prompts on the backend:** Generate the AI system prompt dynamically on the server based on sanitized input variables sent from the frontend.
+3.  **Ensure appropriate runtime environments:** When using Node.js-specific SDKs (like `@google/genai`) within a serverless or edge environment, ensure the correct directive (e.g., `"use node";`) is applied to avoid compatibility issues.
