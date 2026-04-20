@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useStore } from '../store';
 import { lineString, length, along, bearing } from '@turf/turf';
 
@@ -22,6 +22,17 @@ const SimulationEngine: React.FC = () => {
   
   // High-performance base speeds: Nano at 80m/s, Micro at 140m/s for rapid tactical review
   const baseDroneSpeed = droneSettings.model.includes('Nano') ? 80 : 140; 
+
+  const pathData = useMemo(() => {
+    if (flightPath.length < 2) return null;
+    try {
+      const line = lineString(flightPath.map(p => [p.lng, p.lat]));
+      const totalLength = length(line, { units: 'meters' });
+      return { line, totalLength };
+    } catch (e) {
+      return null;
+    }
+  }, [flightPath]);
   
   const animate = (time: number) => {
     if (!lastTimeRef.current) {
@@ -33,15 +44,13 @@ const SimulationEngine: React.FC = () => {
     const deltaTime = Math.min((time - lastTimeRef.current) / 1000, 0.1); // Cap delta to prevent teleports
     lastTimeRef.current = time;
 
-    if (flightPath.length < 2) {
+    if (!pathData) {
       stopSimulation();
       return;
     }
 
     try {
-      // Fixed with named imports
-      const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-      const totalLength = length(line, { units: 'meters' });
+      const { line, totalLength } = pathData;
       
       const frameDistance = deltaTime * baseDroneSpeed * simSpeedMultiplier;
       distanceRef.current += frameDistance;
