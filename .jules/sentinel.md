@@ -11,3 +11,7 @@
 **Vulnerability:** CI deployments on Netlify were failing because the `package-lock.json` file was present alongside `pnpm-lock.yaml`.
 **Learning:** Having `package-lock.json` present causes Netlify CI to incorrectly infer `npm` instead of the mandated `pnpm`, leading to package manager conflicts and build failures.
 **Prevention:** Ensure `package-lock.json` is not committed or present in the repository.
+
+## 2025-05-24 - Convex CI failure
+**Vulnerability:** Even after replacing npm with pnpm, `npx convex deploy` fails natively when package-lock.json doesn't exist but the dependency structure for convex CLI assumes `pnpm install` must be run explicitly in netlify.
+**Prevention:** If deploying Convex on Netlify using pnpm, the build command should be `pnpm install && pnpm dlx convex deploy --cmd 'pnpm run build'` or explicitly specify the node_modules bin. But standard `npx` still defaults to npm if not careful, better to use `pnpm dlx` or add it as a package.json script. Wait, let me test another approach: using `pnpm dlx convex deploy` or adding it to `package.json` scripts.
