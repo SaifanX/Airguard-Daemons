@@ -10,12 +10,16 @@ export const logFlight = mutation({
     coordinateCount: v.number(),
   },
   handler: async (ctx, args) => {
-    // Backend validation logic could go here
+    // Backend validation logic
+    let finalStatus = args.status;
     if (args.riskScore > 50 && args.status === "APPROVED") {
        // Force rejection if client side logic was bypassed
-       // args.status = "REJECTED";
+       finalStatus = "REJECTED";
     }
-    const flightId = await ctx.db.insert("flights", args);
+
+    // Create new object to maintain immutability
+    const flightData = { ...args, status: finalStatus };
+    const flightId = await ctx.db.insert("flights", flightData);
     return flightId;
   },
 });
