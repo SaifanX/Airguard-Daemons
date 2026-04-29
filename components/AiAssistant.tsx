@@ -2,8 +2,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
-import { lineString, length } from '@turf/turf';
+import { getContextStrings } from '../services/geminiService';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -22,7 +23,8 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
+  const askCaptain = useAction(api.ai.askCaptain);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -52,31 +54,28 @@ const AiAssistant: React.FC = () => {
     if (!overrideText) setInput('');
     setIsLoading(true);
 
-    let flightStats;
+    const { weatherContext, zoneContext } = getContextStrings(weather, flightPath);
+
     try {
-        if (flightPath.length >= 2) {
-            const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-            flightStats = { 
-                distance: parseFloat(length(line, { units: 'kilometers' }).toFixed(2)), 
-                waypoints: flightPath.length 
-            };
-        }
-    } catch (e) {}
+      const aiResponseText = await askCaptain({
+        userMessage: textToSend,
+        riskLevel,
+        violations,
+        droneModel: droneSettings.model,
+        altitude: droneSettings.altitude,
+        weatherContext,
+        zoneContext
+      });
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
-      riskLevel,
-      violations,
-      droneSettings,
-      weather,
-      flightStats,
-      telemetry,
-      flightPath
-    );
-
-    const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
-    setMessages(prev => [...prev, aiMsg]);
-    setIsLoading(false);
+      const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
+      setMessages(prev => [...prev, aiMsg]);
+    } catch (error) {
+      console.error("Error communicating with AI backend:", error);
+      const errorMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: "Relay Error: Could not connect to the AI Tactical Core. Check connection." };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
