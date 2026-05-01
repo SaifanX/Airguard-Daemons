@@ -1,0 +1,4 @@
+## 2024-05-10 - Sensitive API key passed via Vite define config
+**Vulnerability:** The `GEMINI_API_KEY` is being injected directly into the client bundle via Vite's `define` configuration in `vite.config.ts`. The Gemini AI requests are being made directly from the client side in `services/geminiService.ts`.
+**Learning:** This exposes the secret API key to anyone who views the client-side source code. Any direct client-side AI services pose a security risk, expose environment variables, and are strictly prohibited. The Gemini AI API integration must be implemented via the 'askCaptain' Convex action in 'convex/ai.ts' to ensure API key security.
+**Prevention:** Remove the `define` block from `vite.config.ts` that injects the key. Refactor `services/geminiService.ts` to call the backend Convex action instead of interacting with the Gemini API directly.
