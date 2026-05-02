@@ -1,0 +1,4 @@
+## 2024-11-20 - [Secret Leakage via Vite define]
+**Vulnerability:** A secret API key (Gemini API key) was inadvertently embedded into the frontend bundle using Vite's `define` property (`'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY)`), allowing any client to extract and abuse the key. In addition, the AI service was running as a client-side module, completely exposing the key to the frontend.
+**Learning:** Using build-time text replacements like Vite's `define` with secret environment variables injects them statically into the browser bundle. Never use this technique for secrets or private keys.
+**Prevention:** Always proxy AI or third-party service calls requiring private secrets through a secure backend (in this case, Convex server functions). Read secrets from the backend runtime environment (`process.env.API_KEY`) safely and securely, passing only non-sensitive context/payloads from the frontend.
