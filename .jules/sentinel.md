@@ -1,0 +1,4 @@
+## 2024-05-06 - Missing Backend Validation for Flight Risk Scores
+**Vulnerability:** The `logFlight` Convex mutation trusted client-provided status even for flights with high risk scores (> 50), allowing malicious clients or bypassed client logic to insert "APPROVED" flights despite high risk.
+**Learning:** Backend validation logic must always enforce critical business rules independently of the frontend. In this application, data passed from the frontend to `convex/flights.ts` can bypass frontend validation controls. Mutating the `args` directly in Convex handlers is not recommended.
+**Prevention:** Reconstruct or copy the input object (`args`) within the mutation handler using `{ ...args }` and enforce server-side validation checks (e.g., verifying maximum allowed thresholds) on the new object before persisting it to the database to ensure defense in depth.
