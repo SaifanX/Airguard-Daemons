@@ -98,7 +98,12 @@ const AiAssistant: React.FC = () => {
         weatherContext,
         zoneContext,
         flightStats,
-        telemetry
+        telemetry: telemetry ? {
+          speed: telemetry.speed,
+          heading: telemetry.heading,
+          battery: telemetry.battery,
+          altitudeAGL: telemetry.altitudeAGL
+        } : undefined
       });
     } catch (e) {
       console.error(e);
