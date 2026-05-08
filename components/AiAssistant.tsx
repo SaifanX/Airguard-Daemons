@@ -4,7 +4,7 @@ import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, 
 import { useStore } from '../store';
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { lineString, length, booleanIntersects, polygon } from '@turf/turf';
+import { lineString, booleanIntersects, polygon } from '@turf/turf';
 import { RESTRICTED_ZONES } from '../data/zones';
 import { ZoneType } from '../types';
 
@@ -25,10 +25,10 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const askCaptain = useAction((api as any).ai?.askCaptain || (() => {}));
+  const askCaptain = useAction((api as any).ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
