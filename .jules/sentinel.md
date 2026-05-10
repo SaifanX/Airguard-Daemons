@@ -1,0 +1,4 @@
+## 2024-10-27 - Hardcoded API Key Exposure via Vite Environment Config
+**Vulnerability:** The Gemini API key `process.env.API_KEY` and `process.env.GEMINI_API_KEY` are explicitly mapped in `vite.config.ts` via the `define` plugin, which injects the sensitive server-side key directly into the bundled client-side JavaScript. This allows anyone using the app or inspecting the client bundle to steal the API key.
+**Learning:** Client-side bundling tools like Vite are meant for frontend execution. Never map sensitive secrets directly to process.env replacement variables because the bundler replaces them inline, exposing the key in plain text to the browser.
+**Prevention:** Remove API key defines from `vite.config.ts`. Instead, route AI calls through the secure backend proxy (Convex action) which has safe access to server-side environment variables and doesn't expose them to the client.
