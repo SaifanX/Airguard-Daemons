@@ -4,7 +4,7 @@ import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, 
 import { useStore } from '../store';
 import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
-import { lineString, length, polygon, booleanIntersects } from '@turf/turf';
+import { lineString, polygon, booleanIntersects } from '@turf/turf';
 import { RESTRICTED_ZONES } from '../data/zones';
 import { ZoneType } from '../types';
 
