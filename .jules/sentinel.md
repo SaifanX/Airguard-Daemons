@@ -1,0 +1,4 @@
+## 2024-05-11 - Authorization Bypass in Server Actions
+**Vulnerability:** The client was trusted to set its own "APPROVED" or "REJECTED" status for drone flight paths, and the backend mutation in `convex/flights.ts` did not forcefully enforce business rules (rejecting flights with a risk score > 50).
+**Learning:** In edge-function environments like Convex, client-side validation logic (calculating risk scores on the frontend) is great for UX but must ALWAYS be re-verified or explicitly bounded on the server mutation to prevent malicious clients from sending fake statuses.
+**Prevention:** Always re-verify critical state constraints inside backend handlers before inserting into the database, treating the `args` from the client as untrusted inputs.
