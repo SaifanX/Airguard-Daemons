@@ -1,0 +1,4 @@
+## 2025-05-12 - Critical Secret Exposure via Vite Config
+**Vulnerability:** The `GEMINI_API_KEY` was exposed to the public frontend by injecting it into the Vite client-side bundle via the `define` configuration in `vite.config.ts`. The frontend service `services/geminiService.ts` was calling the Google Gemini API directly from the client.
+**Learning:** Vite's `define` configuration directly replaces strings in the bundled code. Injecting API keys or secrets using this method exposes them in plaintext to anyone who inspects the frontend code. Client-side AI generation poses a severe security risk.
+**Prevention:** Sensitive API keys must never be injected into the client bundle. All interactions with third-party APIs (like Google Generative AI) must be proxied through secure backend actions (e.g., Convex). Ensure system prompts are constructed securely on the backend to prevent Prompt Injection vulnerabilities.
