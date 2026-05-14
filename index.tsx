@@ -4,7 +4,9 @@ import App from './App';
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
+// Use a fallback URL to prevent crashes during Netlify CI builds where the env var might be missing initially
+const convexUrl = import.meta.env.VITE_CONVEX_URL || "http://localhost:3000";
+const convex = new ConvexReactClient(convexUrl);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
