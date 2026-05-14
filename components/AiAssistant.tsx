@@ -2,7 +2,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
-import { getCaptainCritique } from '../services/geminiService';
+import { getAiContexts } from '../services/geminiService';
+import { useAction } from 'convex/react';
+import { api } from '../convex/_generated/api';
 import { lineString, length } from '@turf/turf';
 
 interface Message {
@@ -24,6 +26,7 @@ const AiAssistant: React.FC = () => {
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const askCaptain = useAction(api.ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,27 +55,21 @@ const AiAssistant: React.FC = () => {
     if (!overrideText) setInput('');
     setIsLoading(true);
 
-    let flightStats;
-    try {
-        if (flightPath.length >= 2) {
-            const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-            flightStats = { 
-                distance: parseFloat(length(line, { units: 'kilometers' }).toFixed(2)), 
-                waypoints: flightPath.length 
-            };
-        }
-    } catch (e) {}
+    const { weatherContext, zoneContext } = getAiContexts(weather, flightPath);
 
-    const aiResponseText = await getCaptainCritique(
-      textToSend,
-      riskLevel,
-      violations,
-      droneSettings,
-      weather,
-      flightStats,
-      telemetry,
-      flightPath
-    );
+    let aiResponseText = "Radio silence. Connection error.";
+    try {
+      aiResponseText = await askCaptain({
+        userMessage: textToSend,
+        riskLevel,
+        violations,
+        droneModel: droneSettings.model,
+        weatherContext,
+        zoneContext,
+      });
+    } catch (e) {
+      console.error("Failed to fetch AI critique:", e);
+    }
 
     const aiMsg: Message = { id: (Date.now() + 1).toString(), sender: 'ai', text: aiResponseText };
     setMessages(prev => [...prev, aiMsg]);
