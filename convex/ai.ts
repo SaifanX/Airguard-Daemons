@@ -1,3 +1,4 @@
+"use node";
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
@@ -10,6 +11,8 @@ export const askCaptain = action({
     riskLevel: v.number(),
     violations: v.array(v.string()),
     droneModel: v.string(),
+    weatherContext: v.string(),
+    zoneContext: v.string(),
   },
   handler: async (ctx, args) => {
     const apiKey = process.env.API_KEY;
@@ -23,6 +26,8 @@ export const askCaptain = action({
       Risk Level: ${args.riskLevel}%.
       Violations: ${args.violations.join(", ")}.
       Drone: ${args.droneModel}.
+      Weather: ${args.weatherContext}.
+      Airspace Status: ${args.zoneContext}.
       Be strict, professional, and concise.
     `;
 
