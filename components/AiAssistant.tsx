@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
 import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
@@ -25,7 +25,7 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const askCaptainAction = useAction((api as any).ai.askCaptain);
 
