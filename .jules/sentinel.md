@@ -1,0 +1,5 @@
+## 2024-05-24 - [CRITICAL] Prevent Client-Side API Key Exposure & Prompt Injection in Convex
+
+**Vulnerability:** The Gemini `API_KEY` was injected directly into the client bundle via `vite.config.ts`'s `define` block, allowing unauthorized extraction. Additionally, constructing the AI `systemInstruction` prompt directly on the frontend allowed users to modify the safety parameters or potentially bypass safety directives.
+**Learning:** For serverless architectures (like Convex), the frontend should never hold sensitive API keys or full system logic. The frontend acts as a "Confused Deputy" if it constructs the prompt, as an attacker can manipulate the requests before they reach the GenAI API.
+**Prevention:** Remove API keys from Vite `define` config entirely. Perform all API transactions on the backend via Convex actions. Construct the sensitive AI system prompt and safety instructions strictly on the server-side, accepting only pure state data (like weather and coordinates) from the client.
