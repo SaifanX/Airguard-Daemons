@@ -16,13 +16,7 @@ export const logFlight = mutation({
        // Force rejection if client side logic was bypassed
        finalStatus = "REJECTED";
     }
-
-    const flightData = {
-      ...args,
-      status: finalStatus,
-    };
-
-    const flightId = await ctx.db.insert("flights", flightData);
+    const flightId = await ctx.db.insert("flights", { ...args, status: finalStatus });
     return flightId;
   },
 });
