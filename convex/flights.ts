@@ -11,11 +11,18 @@ export const logFlight = mutation({
   },
   handler: async (ctx, args) => {
     // Backend validation logic could go here
+    let finalStatus = args.status;
     if (args.riskScore > 50 && args.status === "APPROVED") {
        // Force rejection if client side logic was bypassed
-       // args.status = "REJECTED";
+       finalStatus = "REJECTED";
     }
-    const flightId = await ctx.db.insert("flights", args);
+
+    const flightData = {
+      ...args,
+      status: finalStatus,
+    };
+
+    const flightId = await ctx.db.insert("flights", flightData);
     return flightId;
   },
 });

@@ -1,0 +1,4 @@
+## 2025-05-18 - Client-Side Validation Bypass Prevention
+**Vulnerability:** A critical vulnerability existed where the client could potentially bypass safety rules by sending a `riskScore > 50` while maintaining an `APPROVED` status to the Convex mutation `logFlight`.
+**Learning:** Client-side validations are inherently insecure and can easily be bypassed by malicious actors directly interacting with the Convex API. The backend must independently enforce all business and safety rules, especially critical ones like risk rejection.
+**Prevention:** All critical validations must be duplicated or exclusively handled on the server. When accepting state objects in Convex mutations, validate the constraints directly before database insertion and create a new object rather than mutating the input `args` directly.
