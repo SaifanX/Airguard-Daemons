@@ -9,19 +9,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lucide-react": "^0.463.0",
     "@google/genai": "^1.40.0",
+    "@turf/turf": "^7.1.0",
+    "convex": "^1.17.0",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.463.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@turf/turf": "^7.1.0",
     "react-leaflet": "^5.0.0",
-    "convex": "^1.17.0",
-    "zustand": "^5.0.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
