@@ -1,0 +1,4 @@
+## 2025-05-21 - API Key Leakage via Vite config
+**Vulnerability:** The VITE build configuration file (`vite.config.ts`) was injecting environment variables (`process.env.API_KEY` and `process.env.GEMINI_API_KEY`) into the frontend bundle using the `define` plugin, exposing secret API keys to the client side.
+**Learning:** In Vite, any values injected via the `define` configuration are statically replaced in the compiled frontend code. If sensitive variables are referenced this way, they become easily retrievable by end users or attackers inspecting the bundled files.
+**Prevention:** Never inject secrets via Vite's `define` or prefix them with `VITE_`. Move all sensitive API interactions and processing logic to the backend (like Convex actions or edge functions) where secrets can remain hidden in server-side environment variables.
