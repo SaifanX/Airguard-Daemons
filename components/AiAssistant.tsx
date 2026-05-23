@@ -1,9 +1,11 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
 import { getCaptainCritique } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -12,6 +14,7 @@ interface Message {
 }
 
 const AiAssistant: React.FC = () => {
+  const askCaptainAction = useAction(api.ai.askCaptain);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([{
@@ -64,6 +67,7 @@ const AiAssistant: React.FC = () => {
     } catch (e) {}
 
     const aiResponseText = await getCaptainCritique(
+      askCaptainAction,
       textToSend,
       riskLevel,
       violations,
