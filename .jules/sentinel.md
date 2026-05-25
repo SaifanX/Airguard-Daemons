@@ -1,0 +1,4 @@
+## 2025-03-01 - Prevent Exposing Secrets via Vite Define
+**Vulnerability:** The Google GenAI API key was directly injected into the client bundle using Vite's `define` configuration, completely bypassing prefix rules (`VITE_`). This exposed the raw secret to any user accessing the frontend.
+**Learning:** Any value explicitly passed to `define` in `vite.config.ts` (e.g., `process.env.API_KEY`) is hardcoded in plain text during the client-side build, presenting a critical security risk for backend service secrets.
+**Prevention:** Never use `define` for sensitive secrets. All integrations requiring backend API keys (such as AI models) must be proxied through secure backend environments, such as a Convex server action, to ensure keys are kept secret on the server.

@@ -4,7 +4,7 @@ import App from './App';
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
