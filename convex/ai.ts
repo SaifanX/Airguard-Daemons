@@ -14,7 +14,7 @@ export const askCaptain = action({
     weatherContext: v.string(),
     zoneContext: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) {
       console.error("AI_COMMAND_ERROR: API_KEY is missing from environment.");
