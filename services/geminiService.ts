@@ -9,8 +9,8 @@ export const getCaptainCritique = async (
   violations: string[],
   flightDetails: any,
   weather?: any,
-  flightStats?: { distance: number; waypoints: number },
-  telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
+  _flightStats?: { distance: number; waypoints: number },
+  _telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
   path?: { lat: number, lng: number }[]
 ): Promise<string> => {
   const weatherContext = weather 
