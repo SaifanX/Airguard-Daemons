@@ -1,9 +1,10 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
 import { getCaptainCritique } from '../services/geminiService';
-import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -22,8 +23,9 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
-  const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const { riskLevel, violations, droneSettings, weather, flightPath } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const askCaptainAction = useAction((api as any).ai.askCaptain);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,25 +54,13 @@ const AiAssistant: React.FC = () => {
     if (!overrideText) setInput('');
     setIsLoading(true);
 
-    let flightStats;
-    try {
-        if (flightPath.length >= 2) {
-            const line = lineString(flightPath.map(p => [p.lng, p.lat]));
-            flightStats = { 
-                distance: parseFloat(length(line, { units: 'kilometers' }).toFixed(2)), 
-                waypoints: flightPath.length 
-            };
-        }
-    } catch (e) {}
-
     const aiResponseText = await getCaptainCritique(
+      askCaptainAction,
       textToSend,
       riskLevel,
       violations,
       droneSettings,
       weather,
-      flightStats,
-      telemetry,
       flightPath
     );
 
