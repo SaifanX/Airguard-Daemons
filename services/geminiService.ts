@@ -28,7 +28,7 @@ export const getCaptainCritique = async (
       }).map(z => z.name);
       
       if (intersected.length > 0) zoneContext = `CRITICAL: Flight vector enters restricted zones: ${intersected.join(", ")}.`;
-    } catch (e) {
+    } catch {
       console.warn("Zone intersection check failed during AI context generation");
     }
   }
