@@ -65,7 +65,7 @@ const AiAssistant: React.FC = () => {
                 waypoints: flightPath.length 
             };
         }
-    } catch (e) {}
+    } catch (_e) {}
 
     const aiResponseText = await getCaptainCritique(
       askCaptainAction,
