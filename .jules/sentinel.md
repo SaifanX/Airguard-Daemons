@@ -1,0 +1,4 @@
+## 2025-02-28 - Client-Side Validation Bypass in Flight Logging
+**Vulnerability:** The backend `logFlight` mutation in `convex/flights.ts` relied entirely on the client to send the correct `status` (e.g., REJECTED for high risk) and didn't enforce it server-side. Additionally, the commented-out attempt to fix this directly mutated the `args` object, which is bad practice.
+**Learning:** Client-provided state is untrusted. Malicious clients can bypass frontend validation and submit "APPROVED" for flights with `riskScore > 50`. Furthermore, Convex mutation handlers should prefer immutability when dealing with inputs.
+**Prevention:** Always re-validate critical business rules on the backend before inserting into the database. When altering incoming data before DB insertion, create a new object (e.g., using spread syntax like `const flightData = { ...args }`) instead of mutating the `args` parameter directly to maintain immutability and data integrity.

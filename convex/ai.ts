@@ -1,3 +1,5 @@
+"use node";
+
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
@@ -11,8 +13,8 @@ export const askCaptain = action({
     violations: v.array(v.string()),
     droneModel: v.string(),
   },
-  handler: async (ctx, args) => {
-    const apiKey = process.env.API_KEY;
+  handler: async (_ctx, args) => {
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("API Key missing on server");
 
     const ai = new GoogleGenAI({ apiKey });
@@ -33,8 +35,8 @@ export const askCaptain = action({
         config: { systemInstruction: systemPrompt }
       });
       return response.text;
-    } catch (e) {
-      console.error(e);
+    } catch (_e) {
+      console.error(_e);
       return "Radio silence. Connection error.";
     }
   },
