@@ -58,8 +58,6 @@ const MapInteractions = () => {
   useMapEvents({
     mousedown() { setIsInteracting(true); },
     mouseup() { setIsInteracting(false); },
-    touchstart() { setIsInteracting(true); },
-    touchend() { setIsInteracting(false); },
     dragstart() { setIsInteracting(true); },
     dragend() { setIsInteracting(false); },
     click(e) {
