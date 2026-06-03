@@ -4,7 +4,7 @@ import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, 
 import { useStore } from '../store';
 import { getCaptainCritique } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
-import { useAction, useConvex } from 'convex/react';
+import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
 
 interface Message {
@@ -64,7 +64,7 @@ const AiAssistant: React.FC = () => {
                 waypoints: flightPath.length 
             };
         }
-    } catch (e) {}
+    } catch (_e) {}
 
     const aiResponseText = await getCaptainCritique(
       askCaptainAction,
