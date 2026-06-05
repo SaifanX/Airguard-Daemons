@@ -10,8 +10,8 @@ export const getCaptainCritique = async (
   violations: string[],
   flightDetails: any,
   weather?: any,
-  flightStats?: { distance: number; waypoints: number },
-  telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
+  _flightStats?: { distance: number; waypoints: number },
+  _telemetry?: { speed: number; heading: number; battery: number; altitudeAGL: number },
   path?: { lat: number, lng: number }[]
 ): Promise<string> => {
   const weatherContext = weather 
@@ -30,7 +30,7 @@ export const getCaptainCritique = async (
       }).map(z => z.name);
       
       if (intersected.length > 0) zoneContext = `CRITICAL: Flight vector enters restricted zones: ${intersected.join(", ")}.`;
-    } catch (e) {
+    } catch (_e) {
       console.warn("Zone intersection check failed during AI context generation");
     }
   }
