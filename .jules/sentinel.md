@@ -1,0 +1,4 @@
+## 2026-06-06 - Prevent API Key Exposure
+**Vulnerability:** The Gemini API key was exposed to the frontend via the `define` block in `vite.config.ts` and used directly in the client-side `services/geminiService.ts` to call the AI. This is a critical security vulnerability.
+**Learning:** Client-side initialization of SDKs that require secrets (like `GoogleGenAI`) will inevitably leak the secret to users. Also, any value defined in Vite's `define` config is hardcoded into the client bundle, even if not prefixed with `VITE_`.
+**Prevention:** Always initialize and call third-party APIs that require secret keys from a backend environment. In Convex, this requires moving the logic to a server action (e.g., `convex/ai.ts`). Furthermore, use the `"use node";` directive for Node-specific modules in Convex actions. Never use `define` in Vite for sensitive secrets.
