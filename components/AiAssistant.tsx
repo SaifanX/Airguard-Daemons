@@ -4,6 +4,8 @@ import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, 
 import { useStore } from '../store';
 import { getCaptainCritique } from '../services/geminiService';
 import { lineString, length } from '@turf/turf';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 interface Message {
   id: string;
@@ -22,6 +24,7 @@ const AiAssistant: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
+  const askCaptainAction = useAction((api as any).ai.askCaptain);
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +67,7 @@ const AiAssistant: React.FC = () => {
     } catch (e) {}
 
     const aiResponseText = await getCaptainCritique(
+      askCaptainAction,
       textToSend,
       riskLevel,
       violations,
