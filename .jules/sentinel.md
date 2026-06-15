@@ -1,0 +1,4 @@
+## 2025-06-15 - Leaked API Key via Vite Define
+**Vulnerability:** The `vite.config.ts` file included a `define` property that passed `process.env.API_KEY` to the client build via `JSON.stringify`, leaking the secret API key to the frontend.
+**Learning:** Vite's `define` configuration directly replaces the variables in the code and should never be used for sensitive secrets like API keys, even if prefixed or manipulated with environment tools. It completely bypasses the protections of not prefixing with `VITE_`.
+**Prevention:** Always ensure sensitive actions (like Generative AI calls) are performed purely on the backend. Store API keys securely in the backend environment. The client must only send the necessary inputs (context, prompts, risk factors) to a secure server function (like a Convex action) rather than interacting with third-party APIs directly.
