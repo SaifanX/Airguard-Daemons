@@ -1,0 +1,4 @@
+## 2026-03-09 - Fix API key exposure and insecure direct AI invocation
+**Vulnerability:** The Google GenAI API key was exposed in the frontend bundle via Vite's `define` configuration, allowing anyone to extract it. Furthermore, the `getCaptainCritique` function directly invoked the API from the client, introducing an Open Proxy/Confused Deputy vulnerability and potential prompt injection.
+**Learning:** Hardcoding API keys in frontend configuration options like Vite's `define` fully bypasses prefix safety rules (like `VITE_`), and running AI inference directly on the client allows users to manipulate the context variables and system instruction strings natively.
+**Prevention:** Always proxy AI models and third-party APIs through the Convex backend. Only pass necessary raw/formatted data from the client, never raw instruction overrides or keys.
