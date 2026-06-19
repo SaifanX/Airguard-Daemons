@@ -1,0 +1,4 @@
+## 2025-03-01 - [Exposed API Key in Vite config `define`]
+**Vulnerability:** Hardcoded API key in `vite.config.ts` using the `define` block, which exposed `process.env.API_KEY` and `process.env.GEMINI_API_KEY` to the client-side bundle. AI calls were also made securely from the client-side using `services/geminiService.ts`.
+**Learning:** In Vite, any value explicitly passed to the `define` configuration property will be bundled and exposed in plain text in the client-side build, bypassing `VITE_` prefix rules. Never use `define` for sensitive secrets. All AI calls using sensitive keys should happen on the backend via Convex actions, not from the frontend.
+**Prevention:** Avoid defining sensitive variables in `vite.config.ts` under `define`. Use Convex backend actions (like `askCaptain` in `convex/ai.ts`) for AI interactions. Ensure Convex actions use `"use node";` when they require Node.js-specific modules like `@google/genai`.

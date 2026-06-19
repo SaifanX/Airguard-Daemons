@@ -1,3 +1,5 @@
+"use node";
+
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
@@ -12,7 +14,7 @@ export const askCaptain = action({
     droneModel: v.string(),
   },
   handler: async (ctx, args) => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("API Key missing on server");
 
     const ai = new GoogleGenAI({ apiKey });
