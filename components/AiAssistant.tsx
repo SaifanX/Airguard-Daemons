@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, X, Bot, FileText, Loader2, Activity, ShieldAlert, Zap, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { useStore } from '../store';
 import { getCaptainCritique } from '../services/geminiService';
+import { useAction } from 'convex/react';
+import { api } from '../convex/_generated/api';
 import { lineString, length } from '@turf/turf';
 
 interface Message {
@@ -23,6 +25,7 @@ const AiAssistant: React.FC = () => {
   const [lastAutoTriggeredRisk, setLastAutoTriggeredRisk] = useState(0);
   
   const { riskLevel, violations, droneSettings, weather, flightPath, telemetry } = useStore();
+  const askCaptainAction = useAction((api as any).ai.askCaptain);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -64,6 +67,7 @@ const AiAssistant: React.FC = () => {
     } catch (e) {}
 
     const aiResponseText = await getCaptainCritique(
+      askCaptainAction,
       textToSend,
       riskLevel,
       violations,
