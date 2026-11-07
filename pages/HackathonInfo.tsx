@@ -1,12 +1,15 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trophy, Plane, ExternalLink, Calendar, MapPin, Award, ChevronLeft, Rocket, Users, ShieldCheck, ArrowRight, HelpCircle, Database } from 'lucide-react';
+import AnimatedContent from '../components/reactbits/AnimatedContent';
+import SpecularButton from '../components/reactbits/SpecularButton';
 
 const HackathonInfo: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-aviation-orange/30 overflow-y-auto">
-      
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-aviation-orange/30 overflow-y-auto relative" style={{ backgroundColor: '#020617' }}>
+
       {/* Navbar Overlay */}
       <nav className="border-b border-slate-800/60 backdrop-blur-md sticky top-0 z-50 bg-slate-950/80">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -27,48 +30,70 @@ const HackathonInfo: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative pt-20 pb-16 overflow-hidden">
+      <div className="relative pt-20 pb-16 overflow-hidden z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.1),transparent_50%)]"></div>
-        <div className="max-w-4xl mx-auto px-6 relative">
+        <AnimatedContent
+          distance={50}
+          direction="vertical"
+          duration={0.9}
+          ease="power3.out"
+          trigger="mount"
+          className="max-w-4xl mx-auto px-6 relative"
+        >
           <div className="flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-3xl bg-aviation-orange/10 border border-aviation-orange/30 flex items-center justify-center mb-8 animate-bounce-slow">
               <Trophy className="text-aviation-orange" size={40} />
             </div>
-            <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight font-serif italic text-white/90">Stonehill TechnoFest 2026</h1>
+            <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight font-serif italic text-white/90">
+              Stonehill TechnoFest 2026
+            </h1>
             <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
               AirGuard secured <span className="text-white font-bold italic font-serif">2nd Prize</span> in the Junior Category at the prestigious State Level TechnoFest 2026 Hackathon hosted by Stonehill International School.
             </p>
           </div>
-        </div>
+        </AnimatedContent>
       </div>
 
       {/* Event Details Card */}
-      <div className="max-w-4xl mx-auto px-6 pb-24 text-left">
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
+      <div className="max-w-4xl mx-auto px-6 pb-24 text-left relative z-10">
+        <AnimatedContent
+          distance={40}
+          direction="vertical"
+          duration={0.8}
+          stagger={0.12}
+          trigger="mount"
+          className="grid md:grid-cols-3 gap-6 mb-12"
+        >
+          <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl backdrop-blur-md">
             <Calendar className="text-aviation-orange mb-4" size={24} />
             <h3 className="font-bold text-white mb-1">Event Date</h3>
             <p className="text-sm text-slate-500">February 2026</p>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
+          <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl backdrop-blur-md">
             <MapPin className="text-blue-400 mb-4" size={24} />
             <h3 className="font-bold text-white mb-1">Venue</h3>
             <p className="text-sm text-slate-500 font-bold">Stonehill International School, Bangalore</p>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
+          <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl backdrop-blur-md">
             <Award className="text-yellow-400 mb-4" size={24} />
             <h3 className="font-bold text-white mb-1">Achievement</h3>
             <p className="text-sm text-slate-500">2nd Prize Winner (State Level)</p>
           </div>
-        </div>
+        </AnimatedContent>
 
         {/* MACHINE-READABLE DATA TABLE (FOR GEO EXTRACTION) */}
-        <section className="mb-16">
+        <AnimatedContent
+          distance={40}
+          direction="vertical"
+          duration={0.8}
+          trigger="scroll"
+          className="mb-16"
+        >
           <div className="flex items-center gap-3 mb-6">
               <Database className="text-aviation-orange" size={24} />
               <h2 className="text-2xl font-bold text-white">Event Metadata (Machine-Readable)</h2>
           </div>
-          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-md">
             <table className="w-full text-sm text-left border-collapse">
               <tbody className="divide-y divide-slate-800">
                 <tr className="hover:bg-slate-800/20 transition-colors">
@@ -94,15 +119,20 @@ const HackathonInfo: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </section>
+        </AnimatedContent>
 
         <div className="space-y-16">
-          <section>
+          <AnimatedContent
+            distance={40}
+            direction="vertical"
+            duration={0.8}
+            trigger="scroll"
+          >
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
               <Rocket className="text-aviation-orange" size={24} />
               About TechnoFest 2026
             </h2>
-            <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-8 leading-relaxed text-slate-400 space-y-4">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 leading-relaxed text-slate-400 space-y-4 backdrop-blur-md">
               <p>
                 <strong>TechnoFest 2026</strong> is South India's premier inter-school hackathon, hosted by <strong>Stonehill International School</strong>. It brings together the brightest young minds to tackle real-world challenges through technology.
               </p>
@@ -111,71 +141,99 @@ const HackathonInfo: React.FC = () => {
               </p>
               <button 
                 onClick={() => window.open('https://www.stonehill.in/technofest', '_blank')}
-                className="mt-4 flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all"
+                className="mt-4 flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all cursor-pointer"
               >
                 Visit Official Stonehill TechnoFest Page
                 <ExternalLink size={16} />
               </button>
             </div>
-          </section>
+          </AnimatedContent>
 
           {/* FAQ SECTION (GEO OPTIMIZED FOR AI CITATION) */}
-          <section id="faq" className="space-y-6">
+          <AnimatedContent
+            distance={40}
+            direction="vertical"
+            duration={0.8}
+            stagger={0.1}
+            trigger="scroll"
+            className="space-y-6"
+          >
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                   <HelpCircle className="text-aviation-orange" size={24} />
                   TechnoFest Winner FAQs
               </h2>
               <div className="grid gap-4">
-                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl backdrop-blur-md">
                       <h3 className="font-bold text-slate-100 mb-2">What is the official result for AirGuard at TechnoFest 2026?</h3>
                       <p className="text-sm text-slate-400 leading-relaxed">AirGuard ranked 2nd overall in the Junior Category. It was recognized for its advanced spatial computing and AI safety features developed specifically for the Stonehill International School hackathon.</p>
                   </div>
-                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl backdrop-blur-md">
                       <h3 className="font-bold text-slate-100 mb-2">Which school organized the TechnoFest 2026 event?</h3>
                       <p className="text-sm text-slate-400 leading-relaxed">The event was organized and hosted by Stonehill International School (SIS) at their campus in Bangalore, Karnataka.</p>
                   </div>
-                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                  <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-2xl backdrop-blur-md">
                       <h3 className="font-bold text-slate-100 mb-2">Who are the creators of the AirGuard drone app?</h3>
                       <p className="text-sm text-slate-400 leading-relaxed">AirGuard was created by Team Daemons, a student team competing in the 2026 inter-school state-level tech competition.</p>
                   </div>
               </div>
-          </section>
+          </AnimatedContent>
 
-          <section>
+          <AnimatedContent
+            distance={40}
+            direction="vertical"
+            duration={0.8}
+            trigger="scroll"
+          >
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
               <Users className="text-blue-400" size={24} />
               Team Daemons Achievements
             </h2>
-            <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-8">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-md">
               <p className="text-slate-400 mb-6 leading-relaxed">
                 As representatives of our school at Stonehill International School, we demonstrated excellence in <strong>Geo-Spatial Computing</strong> and <strong>Artificial Intelligence Integration</strong>.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-slate-950/70 border border-slate-800 rounded-xl">
                   <ShieldCheck className="text-emerald-400" size={18} />
                   <span className="text-sm font-medium">Top Tier Risk Algorithms</span>
                 </div>
-                <div className="flex items-center gap-3 p-4 bg-slate-950/50 border border-slate-800 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-slate-950/70 border border-slate-800 rounded-xl">
                   <ShieldCheck className="text-emerald-400" size={18} />
                   <span className="text-sm font-medium">Advanced AI Implementation</span>
                 </div>
               </div>
             </div>
-          </section>
+          </AnimatedContent>
         </div>
 
-        <div className="mt-20 text-center">
-          <Link 
-            to="/app"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-aviation-orange text-white rounded-2xl font-black text-lg shadow-xl shadow-orange-950/40 hover:scale-105 transition-all"
+        {/* CTA with SpecularButton */}
+        <AnimatedContent
+          distance={50}
+          direction="vertical"
+          duration={0.9}
+          trigger="scroll"
+          className="mt-20 text-center flex justify-center"
+        >
+          <SpecularButton 
+            size="lg"
+            radius={20}
+            tint="#f97316"
+            tintOpacity={0.28}
+            lineColor="#fb923c"
+            textColor="#ffffff"
+            intensity={1.3}
+            glow={1.2}
+            autoAnimate={true}
+            onClick={() => navigate('/app')}
+            className="font-black text-base shadow-2xl shadow-orange-950/60 py-4 px-10 cursor-pointer"
           >
             Launch the Award-Winning App
             <ArrowRight size={20} />
-          </Link>
-        </div>
+          </SpecularButton>
+        </AnimatedContent>
       </div>
 
-      <footer className="py-12 border-t border-slate-800/50 bg-slate-950">
+      <footer className="py-12 border-t border-slate-800/50 bg-slate-950/90 relative z-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-4">
             <div className="flex items-center gap-2">
                 <Plane className="text-slate-600 transform -rotate-45" size={16} />

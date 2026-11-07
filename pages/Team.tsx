@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plane, ArrowLeft, Trophy, Users, Star, Github, Globe } from 'lucide-react';
+import AnimatedContent from '../components/reactbits/AnimatedContent';
 
 const TeamCard = ({ imageSrc, name, role, isAward = false, onClick }: { imageSrc: string, name: string, role: string, isAward?: boolean, onClick?: () => void }) => {
   return (
     <div 
-      className={`relative group rounded-3xl overflow-hidden bg-slate-900 shadow-xl ${isAward ? 'ring-2 ring-aviation-orange/50 shadow-orange-500/10' : 'border border-slate-800'} ${onClick ? 'cursor-pointer' : ''}`}
+      className={`relative group rounded-3xl overflow-hidden bg-slate-900/80 backdrop-blur-md shadow-xl ${isAward ? 'ring-2 ring-aviation-orange/50 shadow-orange-500/10' : 'border border-slate-800'} ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick}
     >
       <div className="aspect-[3/4] overflow-hidden bg-slate-800 relative">
@@ -45,7 +46,7 @@ const Team: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-aviation-orange/30">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-aviation-orange/30 relative overflow-y-auto" style={{ backgroundColor: '#020617' }}>
       
       {/* Simple Navbar */}
       <nav className={`fixed z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80' : 'bg-transparent'}`}>
@@ -60,12 +61,19 @@ const Team: React.FC = () => {
         </div>
       </nav>
 
-      <main className="pt-32 pb-24 px-6 max-w-7xl mx-auto relative">
-         <div className="absolute top-0 right-1/4 w-96 h-96 bg-aviation-orange/5 blur-3xl rounded-full -z-10 animate-pulse-fast"></div>
+      <main className="pt-32 pb-24 px-6 max-w-7xl mx-auto relative z-10">
+         <div className="absolute top-0 right-1/4 w-96 h-96 bg-aviation-orange/5 blur-3xl rounded-full -z-10 animate-pulse-fast pointer-events-none"></div>
          
-         {/* Header */}
-         <div className="mb-16 md:mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-400 mb-6">
+         {/* Header with AnimatedContent */}
+         <AnimatedContent
+           distance={50}
+           direction="vertical"
+           duration={0.9}
+           ease="power3.out"
+           trigger="mount"
+           className="mb-16 md:mb-24 text-center md:text-left"
+         >
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-400 mb-6 backdrop-blur-md">
                <Users size={12} className="text-blue-400" />
                DEVELOPED BY TEAM DAEMONS
             </div>
@@ -76,10 +84,17 @@ const Team: React.FC = () => {
             <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
                Meet the young innovators behind the breakthrough urban drone safety system that secured the 2nd prize at the Stonehill International School TechnoFest 2026 Hackathon.
             </p>
-         </div>
+         </AnimatedContent>
 
-         {/* Gallery Grid */}
-         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-150">
+         {/* Gallery Grid with AnimatedContent */}
+         <AnimatedContent
+           distance={45}
+           direction="vertical"
+           duration={0.8}
+           stagger={0.15}
+           trigger="mount"
+           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+         >
             <TeamCard 
                imageSrc="/team/saifan.jpg"
                name="Saifan"
@@ -97,7 +112,7 @@ const Team: React.FC = () => {
                role="Awarded at Stonehill Int. School"
                isAward={true}
             />
-         </div>
+         </AnimatedContent>
       </main>
 
       {/* Member Detail Modal */}
@@ -133,7 +148,7 @@ const Team: React.FC = () => {
             </div>
             <button 
               onClick={() => setSelectedMember(null)} 
-              className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"
+              className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               ✕
             </button>
@@ -141,7 +156,7 @@ const Team: React.FC = () => {
         </div>
       )}
 
-      <footer className="py-12 border-t border-slate-800/50 bg-slate-950 mt-12 relative z-50">
+      <footer className="py-12 border-t border-slate-800/50 bg-slate-950/90 mt-12 relative z-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-4">
             <div className="flex items-center gap-2">
                 <Plane className="text-slate-600 transform -rotate-45" size={16} />

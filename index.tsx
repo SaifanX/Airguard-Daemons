@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './MainApp';
 
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
+const convexUrl = import.meta.env.VITE_CONVEX_URL || "https://dummy-preview-deployment.convex.cloud";
+const convex = new ConvexReactClient(convexUrl);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

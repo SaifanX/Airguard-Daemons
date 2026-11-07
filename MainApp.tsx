@@ -1,8 +1,8 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
+import UnifiedLanding from './pages/UnifiedLanding';
 const MissionControl = lazy(() => import('./components/MissionControl'));
-const UnifiedLanding = lazy(() => import('./pages/UnifiedLanding'));
 const HackathonInfo = lazy(() => import('./pages/HackathonInfo'));
 const Team = lazy(() => import('./pages/Team'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -75,6 +75,7 @@ const SEOManager = () => {
 const DesktopOnlyOverlay = () => {
   const location = useLocation();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+  const [dismissed, setDismissed] = React.useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -82,20 +83,26 @@ const DesktopOnlyOverlay = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (!isMobile) return null;
+  if (!isMobile || dismissed) return null;
   if (!['/app', '/mission-control'].includes(location.pathname)) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-950 flex flex-col items-center justify-center p-8 text-center text-slate-200">
+    <div className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center text-slate-200">
       <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center mb-6 shadow-2xl">
         <svg className="w-8 h-8 text-aviation-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       </div>
-      <h2 className="text-2xl font-bold text-white mb-3">Desktop Required</h2>
-      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-sm">
-        Mission Control is a highly detailed tactical interface. For flight safety and precision, please access AirGuard via a desktop or tablet device.
+      <h2 className="text-2xl font-bold text-white mb-3">Tactical View Optimization</h2>
+      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-sm mb-6">
+        AirGuard Mission Control is engineered for high-precision displays. You can rotate your screen or proceed now.
       </p>
+      <button
+        onClick={() => setDismissed(true)}
+        className="px-6 py-2.5 bg-aviation-orange hover:bg-orange-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-orange-900/30 cursor-pointer"
+      >
+        Enter Tactical Console Anyway
+      </button>
     </div>
   );
 };

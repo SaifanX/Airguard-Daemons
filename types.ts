@@ -59,6 +59,7 @@ export interface UiVisibility {
   isZenMode: boolean;
   checklist: boolean;
   tacticalHud: boolean; // New tactical radar HUD
+  terrainProfile: boolean;
 }
 
 export type SimScenario = 'STANDARD' | 'WINDY' | 'LOW_BATTERY' | 'HEAVY_WEATHER' | 'EMERGENCY_LANDING';
@@ -130,6 +131,12 @@ export interface AppState {
   setSimSpeedMultiplier: (speed: number) => void;
   applyScenario: (scenario: SimScenario) => void;
   updateTelemetry: (data: Partial<TelemetryData>) => void;
+
+  // Evaluator Demo Mode
+  isJudgeDemoActive: boolean;
+  showJudgeModal: boolean;
+  setShowJudgeModal: (show: boolean) => void;
+  loadJudgeDemoMission: () => void;
 
   // Keys
   setApiKey: (key: string) => void;

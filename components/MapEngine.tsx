@@ -1,10 +1,19 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Polygon, Polyline, Marker, useMapEvents, useMap, Tooltip, CircleMarker } from 'react-leaflet';
 import * as L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useStore } from '../store';
 import { RESTRICTED_ZONES } from '../data/zones';
 import { ZoneType } from '../types';
+import { Layers } from 'lucide-react';
+
+// Fix Leaflet's default marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 const MapHandlerController = () => {
   const map = useMap();
@@ -43,10 +52,14 @@ const MapHandlerController = () => {
 const MapResizer = () => {
   const map = useMap();
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      map.invalidateSize();
-    }, 200);
-    return () => clearTimeout(timeout);
+    const t1 = setTimeout(() => map.invalidateSize(), 50);
+    const t2 = setTimeout(() => map.invalidateSize(), 200);
+    const t3 = setTimeout(() => map.invalidateSize(), 600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, [map]);
   return null;
 };
@@ -145,25 +158,106 @@ const MapEngine: React.FC = () => {
     activeScenario,
     mapCenter
   } = useStore();
+
+  const [mapTheme, setMapTheme] = useState<'dark' | 'osm' | 'satellite'>('dark');
   
   const pathPositions = useMemo(() => flightPath.map(p => [p.lat, p.lng] as [number, number]), [flightPath]);
   const previewPositions = useMemo(() => previewPath ? previewPath.map(p => [p.lat, p.lng] as [number, number]) : null, [previewPath]);
 
   const getZoneOptions = (type: ZoneType) => {
     switch(type) {
-      case ZoneType.CRITICAL: return { color: '#ef4444', fillOpacity: 0.2 };
-      case ZoneType.CONTROLLED: return { color: '#3b82f6', fillOpacity: 0.1 };
-      default: return { color: '#f97316', fillOpacity: 0.15 };
+      case ZoneType.CRITICAL: return { color: '#ef4444', fillOpacity: 0.25 };
+      case ZoneType.CONTROLLED: return { color: '#3b82f6', fillOpacity: 0.15 };
+      default: return { color: '#f97316', fillOpacity: 0.2 };
     }
   };
 
+  const getTileConfig = () => {
+    switch (mapTheme) {
+      case 'satellite':
+        return {
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          attribution: '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+          className: '',
+        };
+      case 'dark':
+        return {
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          className: 'tactical-dark-filter',
+        };
+      default: // OpenStreetMap standard
+        return {
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          className: '',
+        };
+    }
+  };
+
+  const currentTile = getTileConfig();
+
   return (
     <div className="relative w-full h-full bg-slate-950">
-      <MapContainer center={mapCenter} zoom={12} className="w-full h-full" zoomControl={false} attributionControl={false}>
+      {/* Map Theme Toggle Layer */}
+      <div className="absolute top-20 left-4 z-[1000] flex items-center bg-slate-900/95 border border-slate-700/80 rounded-xl p-1 shadow-2xl backdrop-blur-md gap-1">
+        <div className="px-2 py-1 flex items-center gap-1 text-[8px] font-black uppercase text-slate-500 tracking-wider">
+          <Layers size={11} className="text-aviation-orange" />
+          <span>Layer:</span>
+        </div>
+        <button
+          onClick={() => setMapTheme('osm')}
+          className={`px-2.5 py-1 text-[9px] font-bold uppercase rounded-lg transition-all ${
+            mapTheme === 'osm' ? 'bg-aviation-orange text-white shadow-md' : 'text-slate-400 hover:text-white'
+          }`}
+          title="Standard OpenStreetMap Vector Layer"
+        >
+          OpenStreetMap
+        </button>
+        <button
+          onClick={() => setMapTheme('dark')}
+          className={`px-2.5 py-1 text-[9px] font-bold uppercase rounded-lg transition-all ${
+            mapTheme === 'dark' ? 'bg-aviation-orange text-white shadow-md' : 'text-slate-400 hover:text-white'
+          }`}
+          title="Tactical High-Contrast Dark Layer"
+        >
+          Tactical Dark
+        </button>
+        <button
+          onClick={() => setMapTheme('satellite')}
+          className={`px-2.5 py-1 text-[9px] font-bold uppercase rounded-lg transition-all ${
+            mapTheme === 'satellite' ? 'bg-aviation-orange text-white shadow-md' : 'text-slate-400 hover:text-white'
+          }`}
+          title="Satellite Imagery Layer"
+        >
+          Satellite
+        </button>
+      </div>
+
+      <style>{`
+        .tactical-dark-filter .leaflet-tile {
+          filter: brightness(0.65) invert(1) contrast(2.2) hue-rotate(200deg) saturate(0.25) !important;
+        }
+      `}</style>
+
+      <MapContainer 
+        center={mapCenter} 
+        zoom={12} 
+        className={`w-full h-full min-h-screen ${currentTile.className}`} 
+        zoomControl={false} 
+        attributionControl={true}
+      >
         <MapResizer />
         <MapHandlerController />
         <MapInteractions />
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+        
+        {/* OpenStreetMap / Satellite TileLayer */}
+        <TileLayer 
+          key={mapTheme}
+          url={currentTile.url}
+          attribution={currentTile.attribution}
+          maxZoom={19}
+        />
 
         {RESTRICTED_ZONES.map(zone => (
             <Polygon
@@ -186,7 +280,7 @@ const MapEngine: React.FC = () => {
         ))}
 
         {previewPath && pathPositions.length > 0 && (
-          <Polyline positions={pathPositions} pathOptions={{ color: '#ffffff', weight: 1, opacity: 0.1, dashArray: '2, 5' }} />
+          <Polyline positions={pathPositions} pathOptions={{ color: '#ffffff', weight: 1, opacity: 0.2, dashArray: '2, 5' }} />
         )}
 
         {pathPositions.length > 0 && (
@@ -196,7 +290,7 @@ const MapEngine: React.FC = () => {
               pathOptions={{ 
                 color: '#f97316', 
                 weight: 3, 
-                opacity: previewPath ? 0.2 : (isSimulating ? 0.2 : 0.8), 
+                opacity: previewPath ? 0.2 : (isSimulating ? 0.3 : 0.9), 
                 dashArray: isSimulating ? '10, 10' : '0' 
               }} 
             />

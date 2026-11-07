@@ -6,11 +6,14 @@ import AiAssistant from './AiAssistant';
 import TacticalHUD from './TacticalHUD';
 import SimulationEngine from './SimulationEngine';
 import PlaybackControlHub from './PlaybackControlHub';
+import TerrainProfile from './TerrainProfile';
+import EvaluatorMissionModal from './EvaluatorMissionModal';
+import Magnet from './reactbits/Magnet';
 import { useStore } from '../store';
 import { 
   Hand, Navigation, Search, Undo2, Eye, EyeOff, LayoutGrid, Ghost, 
   Wind, Loader2, Cpu, ChevronRight, ChevronLeft, Shield, 
-  Settings2, MoreVertical, Layers, Keyboard, Command, Monitor, Zap, Info, X, Radar
+  Settings2, MoreVertical, Layers, Keyboard, Command, Monitor, Zap, Info, X, Radar, Trophy, Sparkles, Mountain
 } from 'lucide-react';
 
 const MissionControl: React.FC = () => {
@@ -28,7 +31,9 @@ const MissionControl: React.FC = () => {
     setMapCenter,
     startSimulation,
     stopSimulation,
-    clearPath
+    clearPath,
+    loadJudgeDemoMission,
+    setShowJudgeModal
   } = useStore();
 
   const [ghostMode, setGhostMode] = useState<string | null>(null);
@@ -73,6 +78,8 @@ const MissionControl: React.FC = () => {
         toggleUiElement('aiAssistant');
       } else if (e.key.toLowerCase() === 'r') {
         toggleUiElement('riskMeter');
+      } else if (e.key.toLowerCase() === 'p') {
+        toggleUiElement('terrainProfile');
       } else if (e.key === ' ') {
         e.preventDefault();
         if (isSimulating) stopSimulation();
@@ -144,6 +151,9 @@ const MissionControl: React.FC = () => {
       <div className="absolute inset-0 z-0">
         <MapEngine />
       </div>
+
+      {/* Evaluator Mission Modal */}
+      <EvaluatorMissionModal />
 
       {/* Shortcuts Modal */}
       {showShortcutsHelp && (
@@ -248,6 +258,7 @@ const MissionControl: React.FC = () => {
       <div className={`transition-opacity duration-500 ${uiVisible ? 'opacity-100' : 'opacity-0'}`}>
         {uiElements.sidebar && <Sidebar />}
         
+        {/* Top Left Menu Button */}
         <div 
           ref={menuRef}
           className={`absolute top-4 transition-all duration-300 z-[2000] ${uiElements.sidebar ? 'left-[304px]' : 'left-4'}`}
@@ -326,9 +337,49 @@ const MissionControl: React.FC = () => {
                   </div>
                   <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] border border-slate-700">R</kbd>
                 </button>
+
+                <button 
+                  onClick={() => toggleUiElement('terrainProfile')}
+                  className={`flex items-center justify-between w-full p-2.5 rounded-xl transition-all ${uiElements.terrainProfile ? 'text-emerald-400 bg-emerald-500/10' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Mountain size={16} />
+                    <span className="text-xs font-bold uppercase tracking-tight">Open-Meteo SRTM</span>
+                  </div>
+                  <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] border border-slate-700">P</kbd>
+                </button>
               </div>
             )}
           </div>
+        </div>
+
+        {/* Judges & Evaluators Dedicated Demo Pill Button */}
+        <div 
+          className={`absolute top-4 transition-all duration-300 z-[2000] ${uiElements.sidebar ? 'left-[368px]' : 'left-20'}`}
+        >
+          <Magnet padding={30} magnetStrength={3}>
+            <button
+              onClick={() => loadJudgeDemoMission()}
+              className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/25 via-orange-500/20 to-amber-500/25 border-2 border-amber-400/90 text-amber-300 hover:text-white hover:border-amber-300 transition-all shadow-[0_0_25px_rgba(251,191,36,0.35)] backdrop-blur-xl group cursor-pointer"
+              title="Load Pre-Configured Judge Demo Mission"
+            >
+              <div className="relative flex items-center justify-center">
+                <Trophy size={16} className="text-amber-400 group-hover:rotate-12 transition-transform" />
+                <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-black uppercase tracking-wider leading-none text-white">
+                  Judges & Evaluators Demo
+                </span>
+                <span className="text-[8px] font-mono text-amber-300/90 tracking-tight leading-tight">
+                  Click to run full live flight
+                </span>
+              </div>
+            </button>
+          </Magnet>
         </div>
 
         {uiElements.riskMeter && (
@@ -338,6 +389,7 @@ const MissionControl: React.FC = () => {
           </>
         )}
         {uiElements.tacticalHud && <TacticalHUD />}
+        {uiElements.terrainProfile && <TerrainProfile />}
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-4 w-full max-w-lg px-6">

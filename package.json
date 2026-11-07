@@ -1,7 +1,7 @@
 {
-  "name": "copy-of-airguard-mission-control-mid-hackathon",
+  "name": "Airguard-mission controller and planner",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,16 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lucide-react": "^0.463.0",
     "@google/genai": "^1.40.0",
+    "@turf/turf": "^7.1.0",
+    "convex": "^1.17.0",
+    "gsap": "^3.15.1",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.463.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@turf/turf": "^7.1.0",
     "react-leaflet": "^5.0.0",
-    "convex": "^1.17.0",
-    "zustand": "^5.0.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

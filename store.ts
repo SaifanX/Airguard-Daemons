@@ -36,6 +36,8 @@ const initialChecklist: PreFlightChecklist = {
   softwareUpdated: false
 };
 
+const initialWeatherKey = localStorage.getItem(WEATHER_KEY_STORAGE) || (process.env.OPENWEATHER_API_KEY || '');
+
 export const useStore = create<AppState & { mapCenter: [number, number], setMapCenter: (center: [number, number]) => void }>()((set, get) => ({
   flightPath: [],
   previewPath: null,
@@ -57,13 +59,14 @@ export const useStore = create<AppState & { mapCenter: [number, number], setMapC
     riskMeter: true,
     settings: false,
     checklist: false,
-    isZenMode: false
+    isZenMode: false,
+    terrainProfile: true
   },
   selectedWaypointIndex: null,
   checklist: initialChecklist,
   isFixingPath: false,
   isInteracting: false,
-  mapCenter: [12.9716, 77.5946],
+  mapCenter: [13.1250, 77.6000],
   
   isSimulating: false,
   simProgress: 0,
@@ -73,7 +76,12 @@ export const useStore = create<AppState & { mapCenter: [number, number], setMapC
   activeScenario: 'STANDARD',
 
   userApiKey: '', 
-  weatherApiKey: localStorage.getItem(WEATHER_KEY_STORAGE) || '',
+  weatherApiKey: initialWeatherKey,
+
+  // Evaluator Demo Mode
+  isJudgeDemoActive: false,
+  showJudgeModal: false,
+  setShowJudgeModal: (show: boolean) => set({ showJudgeModal: show }),
 
   setMapCenter: (center) => set({ mapCenter: center }),
 
@@ -117,7 +125,9 @@ export const useStore = create<AppState & { mapCenter: [number, number], setMapC
       simProgress: 0,
       simPosition: null,
       checklist: initialChecklist,
-      isFixingPath: false
+      isFixingPath: false,
+      isJudgeDemoActive: false,
+      showJudgeModal: false
     });
   },
 
@@ -142,8 +152,15 @@ export const useStore = create<AppState & { mapCenter: [number, number], setMapC
   autoFixPath: () => {
     set({ isFixingPath: true });
     setTimeout(() => {
-      const fixed = intelligentReroute(get().flightPath);
-      set({ flightPath: fixed, isFixingPath: false });
+      const fixed = intelligentReroute(get().flightPath, get().droneSettings);
+      set(state => ({ 
+        flightPath: fixed, 
+        isFixingPath: false,
+        droneSettings: {
+          ...state.droneSettings,
+          altitude: Math.min(state.droneSettings.altitude, 60)
+        }
+      }));
       get().calculateRisk();
     }, 500);
   },
@@ -254,9 +271,49 @@ export const useStore = create<AppState & { mapCenter: [number, number], setMapC
     get().calculateRisk();
   },
 
+  loadJudgeDemoMission: () => {
+    const demoPath: Coordinate[] = [
+      { lat: 13.1912, lng: 77.5898 }, // Waypoint 1: Stonehill International School (Launch Point)
+      { lat: 13.1650, lng: 77.5920 }, // Waypoint 2: Bettahalasur Waypoint
+      { lat: 13.1420, lng: 77.5750 }, // Waypoint 3: Yelahanka AFB Perimeter Corridor
+      { lat: 13.1050, lng: 77.5850 }, // Waypoint 4: Jakkur Aerodrome Peripheral
+      { lat: 13.0650, lng: 77.5900 }, // Waypoint 5: Hebbal Flyover Transit
+      { lat: 13.0250, lng: 77.6100 }, // Waypoint 6: Manyata Tech Park Approach
+      { lat: 12.9850, lng: 77.6350 }, // Waypoint 7: Indiranagar - HAL Perimeter (Touchdown Zone)
+    ];
+
+    set({
+      flightPath: demoPath,
+      droneSettings: { altitude: 45, model: 'Nano (<250g)' },
+      checklist: {
+        batteryChecked: true,
+        propellersInspected: true,
+        gpsLock: true,
+        permitChecked: true,
+        softwareUpdated: true,
+      },
+      mapCenter: [13.1250, 77.6000],
+      selectedWaypointIndex: null,
+      isSimulating: true,
+      simProgress: 0,
+      isJudgeDemoActive: true,
+      showJudgeModal: true,
+      sidebarTab: 'SAFETY',
+    });
+
+    get().calculateRisk();
+  },
+
   setWeatherApiKey: (key) => {
     localStorage.setItem(WEATHER_KEY_STORAGE, key);
     set({ weatherApiKey: key });
     get().refreshWeather();
   }
 }));
+
+// Automatically trigger live weather fetch if key is present
+if (initialWeatherKey) {
+  setTimeout(() => {
+    useStore.getState().refreshWeather();
+  }, 100);
+}

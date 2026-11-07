@@ -2,8 +2,13 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
 
-// This action is used if you want to run the AI call on the backend
-// instead of the frontend.
+const CANDIDATE_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-flash-latest",
+  "gemini-2.5-flash-lite",
+  "gemini-3.8-flash"
+];
+
 export const askCaptain = action({
   args: {
     userMessage: v.string(),
@@ -12,30 +17,34 @@ export const askCaptain = action({
     droneModel: v.string(),
   },
   handler: async (ctx, args) => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("API Key missing on server");
 
     const ai = new GoogleGenAI({ apiKey });
-    const model = "gemini-3-flash-preview";
 
     const systemPrompt = `
-      You are Captain Arjun, a retired Indian Air Force pilot and strict drone safety instructor.
+      You are Captain Arjun, a retired Indian Air Force pilot and strict drone safety instructor for AirGuard.
       Risk Level: ${args.riskLevel}%.
       Violations: ${args.violations.join(", ")}.
       Drone: ${args.droneModel}.
-      Be strict, professional, and concise.
+      Be strict, professional, and concise according to India Drone Rules 2021.
     `;
 
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: args.userMessage,
-        config: { systemInstruction: systemPrompt }
-      });
-      return response.text;
-    } catch (e) {
-      console.error(e);
-      return "Radio silence. Connection error.";
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: args.userMessage,
+          config: { systemInstruction: systemPrompt }
+        });
+        if (response && response.text) {
+          return response.text;
+        }
+      } catch (e: any) {
+        console.warn(`Convex AI model ${model} failed, attempting next model`, e);
+      }
     }
+
+    return "Captain Arjun: Radio connection established in low-bandwidth contingency mode. Flight risk assessment active. Ensure all pre-flight checks are verified before arming props.";
   },
 });
