@@ -7,24 +7,24 @@ import ClickSpark from '../components/reactbits/ClickSpark';
 import AnimatedContent from '../components/reactbits/AnimatedContent';
 import Magnet from '../components/reactbits/Magnet';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Plane, Zap, Map as MapIcon, Cpu, ArrowRight, ShieldCheck, 
-  BarChart3, Globe2, Download, MessageSquare, Move, Trophy, 
+import {
+  Plane, Zap, Map as MapIcon, Cpu, ArrowRight, ShieldCheck,
+  BarChart3, Globe2, Download, MessageSquare, Move, Trophy,
   Github, MousePointer2, FileText, CheckCircle2, Mountain, Radar
 } from 'lucide-react';
 
 const DocSection = ({ icon, title, children }: { icon: React.ReactNode, title: string, children?: React.ReactNode }) => (
-    <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-slate-800 rounded-lg text-aviation-orange">
-                {icon}
-            </div>
-            <h2 className="text-xl font-bold text-white uppercase tracking-tight">{title}</h2>
-        </div>
-        <div className="text-slate-400 leading-relaxed space-y-4">
-            {children}
-        </div>
+  <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="flex items-center gap-3 mb-6">
+      <div className="p-2 bg-slate-800 rounded-lg text-aviation-orange">
+        {icon}
+      </div>
+      <h2 className="text-xl font-bold text-white uppercase tracking-tight">{title}</h2>
     </div>
+    <div className="text-slate-400 leading-relaxed space-y-4">
+      {children}
+    </div>
+  </div>
 );
 
 const UnifiedLanding: React.FC = () => {
@@ -40,7 +40,7 @@ const UnifiedLanding: React.FC = () => {
   }, []);
 
   const handleLearnMore = () => {
-    window.open('https://github.com/SaifanX/Daemons-AirGuard', '_blank');
+    window.open('https://github.com/SaifanX/Airguard-Daemons', '_blank');
   };
 
   const scrollToFeatures = (e: React.MouseEvent) => {
@@ -55,12 +55,11 @@ const UnifiedLanding: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-aviation-orange/30 overflow-y-auto scroll-smooth relative" style={{ backgroundColor: '#020617' }}>
 
       {/* Dynamic Island Navbar */}
-      <nav 
-        className={`fixed left-1/2 -translate-x-1/2 z-50 flex items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isScrolled 
-            ? 'top-4 w-[95%] max-w-3xl bg-slate-950/90 backdrop-blur-xl border border-slate-800/80 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8)] h-14 px-6' 
+      <nav
+        className={`fixed left-1/2 -translate-x-1/2 z-50 flex items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled
+            ? 'top-4 w-[95%] max-w-3xl bg-slate-950/90 backdrop-blur-xl border border-slate-800/80 rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8)] h-14 px-6'
             : 'top-0 w-full max-w-full bg-slate-950/70 backdrop-blur-md border-b border-slate-800/60 rounded-none shadow-none h-16 px-6 md:px-12'
-        }`}
+          }`}
       >
         <div className={`w-full flex items-center justify-between mx-auto transition-all duration-500 ${isScrolled ? 'max-w-3xl' : 'max-w-7xl'}`}>
           <Link to="/" className="flex items-center gap-2 group">
@@ -70,27 +69,27 @@ const UnifiedLanding: React.FC = () => {
             <span className={`font-bold tracking-tight uppercase transition-all duration-500 ${isScrolled ? 'text-base' : 'text-lg'}`}>AirGuard</span>
           </Link>
           <div className="flex items-center gap-6">
-            <a 
-              href="#features" 
+            <a
+              href="#features"
               onClick={scrollToFeatures}
               className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden md:block"
             >
               Features
             </a>
-            <Link 
-              to="/hackathon" 
+            <Link
+              to="/hackathon"
               className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden md:block"
             >
               TechnoFest Results
             </Link>
-            <Link 
-              to="/team" 
+            <Link
+              to="/team"
               className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden md:block"
             >
               Team
             </Link>
             <Magnet padding={25} magnetStrength={3}>
-              <Link 
+              <Link
                 to="/app"
                 className="flex items-center gap-2 text-sm font-bold text-aviation-orange hover:text-orange-400 transition-colors"
               >
@@ -119,17 +118,17 @@ const UnifiedLanding: React.FC = () => {
         >
           <Link to="/hackathon" className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-aviation-orange/50 text-xs font-mono text-aviation-orange mb-8 shadow-xl hover:border-aviation-orange hover:scale-105 transition-all">
             <Trophy size={14} className="text-yellow-400" />
-            <DecryptedText 
-              text="TECHNOFEST 2026 2ND PRIZE // STONEHILL INTERNATIONAL SCHOOL" 
-              speed={70} 
-              maxIterations={25} 
+            <DecryptedText
+              text="TECHNOFEST 2026 2ND PRIZE // STONEHILL INTERNATIONAL SCHOOL"
+              speed={70}
+              maxIterations={25}
             />
           </Link>
-          
+
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight drop-shadow-2xl">
             AirGuard Drone Intelligence
           </h1>
-          
+
           <p className="text-lg md:text-xl font-serif italic text-slate-200 mb-6">
             Engineered by <span className="text-aviation-orange font-semibold">Saifan</span> & Team Daemons &bull; Stonehill TechnoFest 2026 Winner
           </p>
@@ -137,11 +136,11 @@ const UnifiedLanding: React.FC = () => {
           <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
             Real-time civilian drone flight corridors with OpenStreetMap airspace geofencing, Google Gemini AI flight advice, and live Open-Meteo elevation clearance.
           </p>
-          
+
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <Magnet padding={40} magnetStrength={2.5}>
               <ClickSpark sparkColor="#f59e0b" sparkCount={12}>
-                <button 
+                <button
                   onClick={() => {
                     useStore.getState().loadJudgeDemoMission();
                     navigate('/app');
@@ -156,7 +155,7 @@ const UnifiedLanding: React.FC = () => {
 
             <Magnet padding={35} magnetStrength={2.5}>
               <ClickSpark sparkColor="#f97316" sparkCount={8}>
-                <button 
+                <button
                   onClick={() => navigate('/app')}
                   className="w-full md:w-auto px-8 py-4 bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:text-white backdrop-blur-md cursor-pointer"
                 >
@@ -167,7 +166,7 @@ const UnifiedLanding: React.FC = () => {
             </Magnet>
 
             <Magnet padding={30} magnetStrength={3}>
-              <button 
+              <button
                 onClick={handleLearnMore}
                 className="w-full md:w-auto px-6 py-4 bg-slate-900/50 hover:bg-slate-800/80 border border-slate-800 text-slate-400 rounded-xl font-bold transition-all hover:text-white flex items-center justify-center gap-2 cursor-pointer"
               >
@@ -225,49 +224,49 @@ const UnifiedLanding: React.FC = () => {
           trigger="scroll"
           className="max-w-4xl mx-auto px-6 relative"
         >
-          <SpotlightCard 
+          <SpotlightCard
             spotlightColor="rgba(249, 115, 22, 0.18)"
             className="p-8 md:p-10 border-aviation-orange/30 shadow-2xl bg-slate-900/40"
           >
-              <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-xl bg-aviation-orange flex items-center justify-center shadow-lg shadow-orange-500/20">
-                    <FileText className="text-white" size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-black uppercase tracking-widest text-white">Project Information & Key Facts</h2>
-                    <p className="text-[10px] text-slate-500 font-mono">STONEHILL TECHNOFEST 2026 OFFICIAL ENTRY</p>
-                  </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-aviation-orange flex items-center justify-center shadow-lg shadow-orange-500/20">
+                <FileText className="text-white" size={24} />
               </div>
-              <div className="grid md:grid-cols-2 gap-8 text-sm leading-relaxed">
-                  <div className="space-y-4">
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Awarded Rank:</strong> 2nd Place at TechnoFest 2026, Bangalore.</p>
-                      </div>
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Lead Architect:</strong> Saifan Mohammad & Team Daemons.</p>
-                      </div>
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Primary Purpose:</strong> Pre-flight safety layer & regulatory compliance assistant for civilian UAV pilots.</p>
-                      </div>
-                  </div>
-                  <div className="space-y-4">
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Technical Core:</strong> React 19, OpenStreetMap, Turf.js Spatial Engine, Google Gemini AI, and Open-Meteo SRTM.</p>
-                      </div>
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Host Venue:</strong> Stonehill International School, Bangalore, India.</p>
-                      </div>
-                      <div className="flex gap-3">
-                        <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
-                        <p className="text-slate-300"><strong className="text-white">Geographic Focus:</strong> Bangalore regional airspace and India Drone Rules 2021.</p>
-                      </div>
-                  </div>
+              <div>
+                <h2 className="text-lg font-black uppercase tracking-widest text-white">Project Information & Key Facts</h2>
+                <p className="text-[10px] text-slate-500 font-mono">STONEHILL TECHNOFEST 2026 OFFICIAL ENTRY</p>
               </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 text-sm leading-relaxed">
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Awarded Rank:</strong> 2nd Place at TechnoFest 2026, Bangalore.</p>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Lead Architect:</strong> Saifan Mohammad & Team Daemons.</p>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Primary Purpose:</strong> Pre-flight safety layer & regulatory compliance assistant for civilian UAV pilots.</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Technical Core:</strong> React 19, OpenStreetMap, Turf.js Spatial Engine, Google Gemini AI, and Open-Meteo SRTM.</p>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Host Venue:</strong> Stonehill International School, Bangalore, India.</p>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="text-aviation-orange shrink-0" size={18} />
+                  <p className="text-slate-300"><strong className="text-white">Geographic Focus:</strong> Bangalore regional airspace and India Drone Rules 2021.</p>
+                </div>
+              </div>
+            </div>
           </SpotlightCard>
         </AnimatedContent>
       </section>
@@ -354,64 +353,64 @@ const UnifiedLanding: React.FC = () => {
           trigger="scroll"
           className="max-w-4xl mx-auto px-6"
         >
-            <div className="flex items-center gap-4 mb-12">
-                <div className="w-12 h-12 rounded-xl bg-aviation-orange/10 border border-aviation-orange/30 flex items-center justify-center">
-                    <Trophy className="text-aviation-orange" size={24} />
-                </div>
-                <div>
-                    <h2 className="text-3xl font-bold text-white uppercase">Stonehill TechnoFest 2026 Bangalore</h2>
-                    <p className="text-slate-400">Winning Entry by Team Daemons // Inter-School State Level Hackathon</p>
-                </div>
+          <div className="flex items-center gap-4 mb-12">
+            <div className="w-12 h-12 rounded-xl bg-aviation-orange/10 border border-aviation-orange/30 flex items-center justify-center">
+              <Trophy className="text-aviation-orange" size={24} />
             </div>
+            <div>
+              <h2 className="text-3xl font-bold text-white uppercase">Stonehill TechnoFest 2026 Bangalore</h2>
+              <p className="text-slate-400">Winning Entry by Team Daemons // Inter-School State Level Hackathon</p>
+            </div>
+          </div>
 
-            <div className="space-y-16">
-                <DocSection 
-                    icon={<Plane size={20} className="text-aviation-orange rotate-[-45deg]" />}
-                    title="The Technofest Challenge"
-                >
-                    <p>
-                        AirGuard was created at <strong>Stonehill International School</strong> during the 24-hour TechnoFest 2026 marathon. Tasked with solving civilian airspace safety, we designed a client-side risk assessment layer for Bengaluru drone operators.
-                    </p>
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 my-4 font-mono text-xs text-aviation-orange/90 leading-relaxed shadow-inner">
-                        // RECORD: STONEHILL TECHNOFEST 2026<br/>
-                        // RESULT: 2ND PRIZE (STATE LEVEL)<br/>
-                        // VENUE: STONEHILL INT. SCHOOL BANGALORE<br/>
+          <div className="space-y-16">
+            <DocSection
+              icon={<Plane size={20} className="text-aviation-orange rotate-[-45deg]" />}
+              title="The Technofest Challenge"
+            >
+              <p>
+                AirGuard was created at <strong>Stonehill International School</strong> during the 24-hour TechnoFest 2026 marathon. Tasked with solving civilian airspace safety, we designed a client-side risk assessment layer for Bengaluru drone operators.
+              </p>
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 my-4 font-mono text-xs text-aviation-orange/90 leading-relaxed shadow-inner">
+                        // RECORD: STONEHILL TECHNOFEST 2026<br />
+                        // RESULT: 2ND PRIZE (STATE LEVEL)<br />
+                        // VENUE: STONEHILL INT. SCHOOL BANGALORE<br />
                         // PROJECT_CODE: DAEMONS_AIRGUARD_V2
-                    </div>
-                </DocSection>
+              </div>
+            </DocSection>
 
-                <DocSection 
-                    icon={<MousePointer2 size={20} className="text-blue-400" />}
-                    title="Engineered for Production"
-                >
-                    <p className="mb-4">
-                        The competition required structural integrity and zero fragile mockups. AirGuard operates with live APIs:
-                    </p>
-                    <ul className="list-disc pl-6 space-y-2 text-slate-300 text-sm">
-                        <li><strong>Mapping:</strong> OpenStreetMap dark tiles with reactive vector drawing.</li>
-                        <li><strong>Geo-Computation:</strong> Turf.js polygon intersections against India Drone Rules 2021.</li>
-                        <li><strong>AI Command:</strong> Google Gemini via `@google/genai` SDK with auto-failover.</li>
-                        <li><strong>Terrain SRTM:</strong> Open-Meteo elevation queries along waypoint coordinates.</li>
-                    </ul>
-                </DocSection>
-            </div>
+            <DocSection
+              icon={<MousePointer2 size={20} className="text-blue-400" />}
+              title="Engineered for Production"
+            >
+              <p className="mb-4">
+                The competition required structural integrity and zero fragile mockups. AirGuard operates with live APIs:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-slate-300 text-sm">
+                <li><strong>Mapping:</strong> OpenStreetMap dark tiles with reactive vector drawing.</li>
+                <li><strong>Geo-Computation:</strong> Turf.js polygon intersections against India Drone Rules 2021.</li>
+                <li><strong>AI Command:</strong> Google Gemini via `@google/genai` SDK with auto-failover.</li>
+                <li><strong>Terrain SRTM:</strong> Open-Meteo elevation queries along waypoint coordinates.</li>
+              </ul>
+            </DocSection>
+          </div>
         </AnimatedContent>
       </section>
 
       {/* Footer */}
       <footer className="py-12 border-t border-slate-800/50 text-center text-slate-500 text-sm bg-slate-950/90 relative z-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-4">
-            <div className="flex items-center gap-2">
-                <Plane className="text-aviation-orange transform -rotate-45" size={18} />
-                <span className="font-bold text-slate-200 tracking-widest uppercase">AirGuard</span>
-            </div>
-            <div className="flex flex-wrap justify-center gap-6 font-bold text-xs">
-              <Link to="/" className="text-aviation-orange transition-colors">Home</Link>
-              <Link to="/app" className="text-slate-400 hover:text-aviation-orange transition-colors">Mission Control</Link>
-              <Link to="/hackathon" className="text-slate-400 hover:text-white transition-colors">TechnoFest</Link>
-              <Link to="/team" className="text-slate-400 hover:text-white transition-colors">Team</Link>
-            </div>
-            <p className="font-mono text-[10px] uppercase hidden lg:block">Official 2026 Stonehill TechnoFest Winner // Bangalore, India</p>
+          <div className="flex items-center gap-2">
+            <Plane className="text-aviation-orange transform -rotate-45" size={18} />
+            <span className="font-bold text-slate-200 tracking-widest uppercase">AirGuard</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 font-bold text-xs">
+            <Link to="/" className="text-aviation-orange transition-colors">Home</Link>
+            <Link to="/app" className="text-slate-400 hover:text-aviation-orange transition-colors">Mission Control</Link>
+            <Link to="/hackathon" className="text-slate-400 hover:text-white transition-colors">TechnoFest</Link>
+            <Link to="/team" className="text-slate-400 hover:text-white transition-colors">Team</Link>
+          </div>
+          <p className="font-mono text-[10px] uppercase hidden lg:block">Official 2026 Stonehill TechnoFest Winner // Bangalore, India</p>
         </div>
       </footer>
     </div>
